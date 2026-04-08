@@ -4,3 +4,135 @@
     font-family: "Inter";
     text-decoration: none;
 }
+
+#TopNav {
+    position: fixed;
+    top: 0;
+    padding: 16px;
+}
+
+.nav-label {
+    color: white;
+    font-size: 24px;
+}
+
+.nav-link {
+    color: white;
+}
+
+#BottomLeftNav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 86px;
+    padding: 16px;
+}
+
+#BottomRightNav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    height: 48px;
+    padding: 16px;
+}
+
+.nav-btn {
+    margin-inline: 10px;
+}
+
+.nav-btn,
+.nav-btn img {
+    height: 100%;
+}
+
+#TarylemNavBtn {
+    margin: 0;
+    opacity: 0.5;
+    transition: ease-in-out 0.25s;
+}
+
+#TarylemNavBtn:hover {
+    opacity: 1;
+}
+
+#MainGameSection {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#VerticalLogo {
+    max-width: 80%;
+    width: 680px;
+    margin-inline: auto;
+    margin-bottom: 36px;
+}
+
+#TrailerVideo {
+    max-width: 80%;
+    width: 692px;
+    aspect-ratio: calc(16/9);
+    margin-inline: auto;
+}
+
+.background-image {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin-inline: auto;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -999;
+}
+
+@media (max-width: 650px) {
+    .nav-label {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .nav-pipe {
+        display: none;
+    }
+}
+
+@media (max-height: 820px) {
+    #MainGameSection {
+        flex-direction: row;
+    }
+
+    #VerticalLogo {
+        max-width: unset;
+        width: unset;
+        margin-inline: unset;
+        margin-bottom: unset;
+
+        margin-top: auto;
+        margin-bottom: auto;
+        margin-right: 64px;
+        max-height: 80%;
+        height: 342px;
+    }
+
+    #TrailerVideo {
+        max-width: unset;
+        width: unset;
+        margin-inline: unset;
+        
+        margin-top: auto;
+        margin-bottom: auto;
+        max-height: 80%;
+        height: 312px;
+    }
+}

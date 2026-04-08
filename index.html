@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8">
         <meta name="description" content="This is the official landing page of the roblox game 'Dash World', based off of the popular rhythm-based game 'Geometry Dash'." />
         <meta name="author" content="Tacky">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,9 +9,38 @@
         <title>Dash World - Home Page</title>
 
         <link rel="icon" type="image/x-icon" href="/img/icon.ico">
+        <link rel="stylesheet" href="https://cdn.tarylem.com/css/fonts.css">
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
+        <section id="MainGameSection">
+            <img src="./img/verticalLogo.png" id="VerticalLogo">
+            <iframe id="TrailerVideo" class="video-embed" src="https://www.youtube.com/embed/UID_HERE" frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen="true"></iframe>
+        </section>
+
+        <nav id="TopNav">
+            <label class="nav-label">
+                <a href="./external/roblox" class="nav-link">GAME PAGE</a>
+                <label class="nav-pipe"> | </label>
+                <a href="./demonlist" class="nav-link">OFFICIAL DEMONLIST</a>
+                <label class="nav-pipe"> | </label>
+                <a href="./level-convert" class="nav-link">LEVEL CONVERT</a>
+            </label>
+        </nav>
+
+        <nav id="BottomLeftNav">
+            <a href="https://www.tarylem.com" class="nav-btn" id="TarylemNavBtn"><img src="./img/tarylem.svg"></a>
+        </nav>
+
+        <nav id="BottomRightNav">
+            <a href="./external/roblox/group" class="nav-btn"><img src="./img/roblox.svg"></a>
+            <a href="./external/discord" class="nav-btn"><img src="./img/discord.svg"></a>
+        </nav>
+
+        <img src="./img/background.png" class="background-image">
+
         <script src="./index.js"></script>
     </body>
 </html>

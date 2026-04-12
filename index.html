@@ -10,35 +10,38 @@
 
         <link rel="icon" type="image/x-icon" href="/img/icon.ico">
         <link rel="stylesheet" href="https://cdn.tarylem.com/css/fonts.css">
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="/global.css">
+        <link rel="stylesheet" href="./style.css">
     </head>
     <body>
         <section id="MainGameSection">
-            <img src="./img/verticalLogo.png" id="VerticalLogo">
+            <img src="/img/verticalLogo.png" id="VerticalLogo">
             <iframe id="TrailerVideo" class="video-embed" src="https://www.youtube.com/embed/fhNv7ERPKBQ" frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowfullscreen="true"></iframe>
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"></iframe>
         </section>
 
         <nav id="TopNav">
             <label class="nav-label">
-                <a href="./external/roblox" target="_blank" class="nav-link">GAME PAGE</a>
+                <a href="/external/roblox" target="_blank" class="nav-link hover-underline">GAME PAGE</a>
+
+                <!-- TODO: Implement new demonlist -->
+                <!--<label class="nav-pipe"> | </label>-->
+                <!--<a href="/demonlist" class="nav-link hover-underline">OFFICIAL DEMONLIST</a>-->
+
                 <label class="nav-pipe"> | </label>
-                <a href="./demonlist" class="nav-link">OFFICIAL DEMONLIST</a>
-                <label class="nav-pipe"> | </label>
-                <a href="./level-convert" class="nav-link">LEVEL CONVERT</a>
+                <a href="/level-convert" class="nav-link hover-underline">LEVEL CONVERT</a>
             </label>
         </nav>
 
         <nav id="BottomLeftNav">
-            <a href="https://www.tarylem.com" target="_blank" class="nav-btn" id="TarylemNavBtn"><img src="./img/tarylem.svg"></a>
+            <a href="https://www.tarylem.com" target="_blank" class="nav-btn" id="TarylemNavBtn"><img src="/img/tarylem.svg"></a>
         </nav>
 
         <nav id="BottomRightNav">
-            <a href="./external/roblox/group" target="_blank" class="nav-btn"><img src="./img/roblox.svg"></a>
-            <a href="./external/discord" target="_blank" class="nav-btn"><img src="./img/discord.svg"></a>
+            <a href="/external/roblox/group" target="_blank" class="nav-btn"><img src="/img/roblox.svg"></a>
+            <a href="/external/discord" target="_blank" class="nav-btn"><img src="/img/discord.svg"></a>
         </nav>
 
-        <img src="./img/background.png" class="background-image">
+        <img src="/img/background.png" class="background-image">
     </body>
 </html>

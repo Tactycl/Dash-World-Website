@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="description" content="This is the official level converter page for the game 'Dash World' on Roblox, it converts Geometry Dash levels." />
+        <meta name="author" content="Tacky">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Dash World - GD Level Converter</title>
+
+        <link rel="icon" type="image/x-icon" href="../img/icon.ico">
+        <link rel="stylesheet" href="https://cdn.tarylem.com/css/fonts.css">
+        <link rel="stylesheet" href="/global.css">
+        <link rel="stylesheet" href="./style.css">
+    </head>
+    <body>
+        <nav id="TopNav">
+            <label class="nav-label">
+                <a href="/" class="nav-link hover-underline">⮜ GO BACK</a>
+            </label>
+        </nav>
+
+        <div id="dropZone">
+            <h2>Drag your Geometry Dash Level Data here</h2>
+            <p>The file needs to be in the .txt format</p>
+            <p>Thanks a lot to <a href="https://github.com/hiimjasmine00" class="hover-underline">Jasmine</a> for the <a href="https://github.com/hiimjasmine00/gd-level-to-json" class="hover-underline">gd-level-to-json library</a> on github</p>
+
+            <ul id="instructions">
+                <li><p><b>1.</b> Open GDColon's website <a href="https://gdcolon.com/gdsave/" class="hover-underline">here</a>.</p></li>
+                <li><p><b>2.</b> Follow your device-specific instructions below.</p></li>
+                <li><p><b>3.</b> Locate the level you want to be converted.</p></li>
+                <li><p><b>4.</b> View the level data of the level (inner string) and create a .txt file of it.</p></li>
+                <li><p><b>5.</b> Drag the .txt here.</p></li>
+
+                <li id="windowsInstructionsTitle"><p>Instructions for <b>Windows</b>:</p></li>
+
+                <li><p><b>1.</b> Press <b>WIN + R</b>.</p></li>
+                <li><p><b>2.</b> Type in "%localappdata%/GeometryDash".</p></li>
+                <li><p><b>3.</b> Drag the <b>CCLocalLevels.dat</b> file into the box.</p></li>
+                
+                <li id="macInstructionsTitle"><p>Instructions for <b>Mac</b>:</p></li>
+
+                <li><p><b>1.</b> Locate <b>~/Library/Application Support/GeometryDash</b>.</p></li>
+                <li><p><b>2.</b> Drag the <b>CCLocalLevels.dat</b> file into the box.</p></li>
+            </ul>
+        </div>
+        <input type="file" id="fileInput" accept=".txt,text/plain">
+
+        <img src="/img/background.png" class="background-image">
+
+        <script src="js/libs/pako.js"></script>
+        <script type="module" src="index.js"></script>
+    </body>
+</html>

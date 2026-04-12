@@ -1,0 +1,28 @@
+* {
+	margin: 0;
+	padding: 0;
+	font-family: "Inter";
+	text-decoration: none;
+	list-style: none;
+}
+
+.hover-underline {
+	position: relative;
+}
+
+.hover-underline::after {
+	content: "";
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	width: 0;
+	height: 2px;
+	border-radius: 2px;
+	background-color: currentColor;
+	transition: ease 0.3s;
+	transform: translateX(-50%);
+}
+
+.hover-underline:hover::after {
+	width: 100%;
+}

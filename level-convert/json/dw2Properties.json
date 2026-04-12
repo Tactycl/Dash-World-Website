@@ -1,0 +1,115 @@
+{
+	"levelSettings": [
+		"gameplaySpeed",
+		"gamemode",
+		"songId",
+		"songOffset",
+		"bgId",
+		"gId",
+		"lId",
+		"bgColor",
+		"gColor",
+		"g2Color",
+		"lColor",
+		"colorChannels",
+		"startMini",
+		"twoPlayer",
+		"flipGravity",
+		"dualMode",
+		"objColor",
+		"3dlColor"
+	],
+
+	"blockSettings": [
+		"toolbox_id",
+		"position",
+		"rotation",
+		"scaleX",
+		"scaleY",
+		"flipX",
+		"flipY",
+		"basecolor_id",
+		"detailcolor_id",
+		"editor_layer",
+		"zorder",
+		"group_ids",
+		"triggerData"
+	],
+
+	"escapeValues": [
+		["|", "__ESC_PIPE"],
+		[",", "__ESC_COMMA"],
+		[";", "__ESC_SEMI"],
+		["~", "__ESC_TILDE"],
+		[":", "__ESC_COLON"],
+		["_", "__ESC_US"],
+		["+", "__ESC_PLUS"],
+		["//", "__ESC_SLASH"],
+		["%", "__ESC_PERCENT"]
+	],
+
+	"gamemodeMapping": [
+		"cube",
+		"ship",
+		"ball",
+		"bird",
+		"wave",
+		"robot",
+		"spider",
+		"swing"
+	],
+
+	"easingMapping": [
+		"None",
+		
+		"Ease In Out",
+		"Ease In",
+		"Ease Out",
+		
+		"Elastic In Out",
+		"Elastic In",
+		"Elastic Out",
+		
+		"Bounce In Out",
+		"Bounce In",
+		"Bounce Out",
+		
+		"Exponential In Out",
+		"Exponential In",
+		"Exponential Out",
+		
+		"Sine In Out",
+		"Sine In",
+		"Sine Out",
+		
+		"Back In Out",
+		"Back In",
+		"Back Out"
+	],
+
+	"colorChannels": {
+		"P1": -1,
+		"P2": -2,
+		"BG": -3,
+		"G": -4,
+		"G2": -5,
+		"Line": -6,
+		"Obj": -7,
+		"3DL": -8,
+		"White": 1000,
+		"Black": 1001
+	},
+
+	"zOrders": {
+		"B5": [-1054, -854],
+		"B4": [-853, -653],
+		"B3": [-652, -452],
+		"B2": [-451, -251],
+		"B1": [-250, -50],
+		
+		"T1": [50, 250],
+		"T2": [251, 451],
+		"T3": [452, 652],
+		"T4": [653, 853]
+	}
+}

@@ -101,7 +101,7 @@
     }
 }
 
-@media (max-height: 900px) {
+@media (max-height: 900px) and (min-width: 1650px) {
     #MainGameSection {
         flex-direction: row;
     }
@@ -123,7 +123,7 @@
         max-width: unset;
         width: unset;
         margin-inline: unset;
-        
+
         margin-top: auto;
         margin-bottom: auto;
         max-height: 80%;

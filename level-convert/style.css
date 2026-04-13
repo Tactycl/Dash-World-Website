@@ -67,6 +67,10 @@ a:not(.nav-link):hover {
     margin-bottom: 20px;
 }
 
+.back-btn {
+    margin-left: 29px;
+}
+
 .background-image {
     position: fixed;
     top: 0;

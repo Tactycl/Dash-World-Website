@@ -4,6 +4,7 @@
 	font-family: "Inter";
 	text-decoration: none;
 	list-style: none;
+	border: none;
 }
 
 .hover-underline {
@@ -25,19 +26,4 @@
 
 .hover-underline:hover::after {
 	width: 100%;
-}
-
-.back-btn::before {
-	content: "";
-	display: block;
-	position: absolute;
-	background-image: url("/img/arrow-left.svg");
-	background-position: center;
-	background-repeat: no-repeat;
-	background-size: contain;
-	left: 0;
-	bottom: 0;
-	transform: translateX(-110%);
-	height: 100%;
-	aspect-ratio: 1;
 }

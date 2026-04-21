@@ -1,7 +1,7 @@
 const copyrightYearSpan = document.getElementById("copyrightYear");
 copyrightYearSpan.innerText = new Date().getFullYear();
 
-var currentTheme = "dark";
+var currentTheme = "system";
 
 const themeButton = document.getElementById("themeButton");
 const themeIcon = document.getElementById("themeIcon");
@@ -20,7 +20,7 @@ function normalizeString(str) {
 }
 
 function reloadTheme() {
-	const theme = localStorage.getItem(DW_THEME_KEY) || "system";
+	const theme = localStorage.getItem(DW_THEME_KEY) || currentTheme;
 	const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 	const finalTheme = theme === "system" ? (prefersDark ? "dark" : "light") : theme;
 	document.documentElement.setAttribute("data-theme", finalTheme);

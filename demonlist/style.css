@@ -115,6 +115,10 @@ span:has(img) img {
 	align-items: center;
 }
 
+#errorRouterNotification {
+	text-align: center;
+}
+
 /* HEADER */
 
 #header::after {

@@ -1,3 +1,8 @@
+:root {
+	--linked-resource-color: #00bbff;
+	--linked-resource-color-hover: #74d3ff;
+}
+
 * {
 	margin: 0;
 	padding: 0;
@@ -26,4 +31,14 @@
 
 .hover-underline:hover::after {
 	width: 100%;
+}
+
+.linked-resource {
+	color: var(--linked-resource-color);
+}
+
+.linked-resource:hover {
+	text-decoration: underline;
+	color: var(--linked-resource-color-hover);
+	text-shadow: 0px 0px 5px color-mix(in oklab, transparent 90%, var(--linked-resource-color-hover) 10%);
 }

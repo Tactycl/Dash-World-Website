@@ -35,7 +35,7 @@ body {
     padding: 20px;
 
     width: 1000px;
-    max-width: calc(95% - 40px);
+    max-width: 95%;
 
     transition: ease 0.3s;
 }

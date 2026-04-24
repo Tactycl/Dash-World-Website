@@ -40,17 +40,10 @@
 .legal-item {
 	border: 1px solid transparent;
 	border-radius: var(--radius-2xl);
-
-	box-shadow:
-		-3px -1px 8px color-mix(in oklab, transparent 80%, var(--color-dw-accent-01) 20%),
-		3px 1px 8px color-mix(in oklab, transparent 80%, var(--color-dw-accent-02) 20%);
-
-	background:
-		linear-gradient(var(--color-bg-02)) padding-box,
-		var(--gradient-dw-accent) border-box;
-
+	box-shadow: var(--box-shadow-faint-glow-dw-accent);
+	background: linear-gradient(var(--color-bg-02)) var(--border-dw-accent);
 	padding: calc(var(--spacing) * 6);
-	width: calc(100% - var(--spacing) * 11.4);
+	width: 100%;
 }
 
 .legal-item .legal-title {

@@ -4,6 +4,15 @@
 	--color-dw-accent-01: #52abff;
 	--color-dw-accent-02: #ff32ff;
 	--gradient-dw-accent: linear-gradient(110deg, var(--color-dw-accent-01) 0%, var(--color-dw-accent-02) 100%);
+	--box-shadow-glow-dw-accent:
+		-3px -1px 8px var(--color-dw-accent-01),
+		3px 1px 8px var(--color-dw-accent-02);
+	--box-shadow-faint-glow-dw-accent:
+		-3px -1px 8px color-mix(in oklab, transparent 80%, var(--color-dw-accent-01) 20%),
+		3px 1px 8px color-mix(in oklab, transparent 80%, var(--color-dw-accent-02) 20%);
+	--border-dw-accent:
+		padding-box,
+		var(--gradient-dw-accent) border-box;
 
 	--radius-2xl: 1.0rem;
 	--radius-xl: 0.7rem;
@@ -17,7 +26,7 @@
 	--text-lg: 1.35rem;
 	--text-nm: 1.1rem;
 	--text-sm: 0.9rem;
-	--text-xs: 0.5rem;
+	--text-xs: 0.7rem;
 
 	--font-bold: 700;
 	--font-semi: 600;
@@ -31,15 +40,17 @@
 	--color-bg-01: #131415;
 	--color-bg-02: #1b1c1e;
 	--color-bg-03: #1f2022;
+	--color-bg-04: #26272a;
 	--text-color-01: #ffffff;
 	--text-color-02: #cccccc;
 	--icon-filter: brightness(100%);
 }
 
 :root[data-theme="light"] {
-	--color-bg-01: #dfe4e8;
-	--color-bg-02: #e6ebef;
-	--color-bg-03: #f5fbff;
+	--color-bg-01: #d3d8db;
+	--color-bg-02: #dce1e6;
+	--color-bg-03: #e9eff3;
+	--color-bg-04: #f5fbff;
 	--text-color-01: #181a1b;
 	--text-color-02: #282a2c;
 	--icon-filter: brightness(0%);
@@ -88,6 +99,10 @@ h6 {
 	height: 100dvh;
 }
 
+#tarylemReference {
+	color: var(--text-color-01);
+}
+
 #header,
 #footer {
 	z-index: 99;
@@ -102,7 +117,7 @@ h6 {
 }
 
 .inline-flex-container {
-	width: calc(100% - var(--spacing) * 16);
+	width: 100%;
 	display: inline-flex;
 	justify-content: space-between;
 	align-items: center;
@@ -223,9 +238,7 @@ span:has(img) img {
 
 .button-master:hover {
 	background: var(--gradient-dw-accent);
-	box-shadow:
-		-3px -1px 8px var(--color-dw-accent-01),
-		3px 1px 8px var(--color-dw-accent-02);
+	box-shadow: var(--box-shadow-glow-dw-accent);
 }
 
 .button-master:hover span {

@@ -2,10 +2,14 @@ class HashRouter {
 	constructor(rootSelector) {
 		this.routes = [];
 		this.root = document.querySelector(rootSelector);
+		this.templateCache = new Map();
+		this.currentTemplate = null;
 
 		window.addEventListener("hashchange", () => this.resolve());
 		window.addEventListener("load", () => this.resolve());
 	}
+
+	getRoot() { return this.root; }
 
 	add(path, options) {
 		const paramNames = [];
@@ -37,7 +41,12 @@ class HashRouter {
 					params[name] = match[i + 1];
 				});
 
-				await this.loadTemplate(route.template, params, route.onLoad);
+				if (this.currentTemplate == route.template) {
+					route.onLoad(false, params);
+
+				} else {
+					await this.loadTemplate(route.template, params, route.onLoad);
+				}
 				return;
 			}
 		}
@@ -47,14 +56,31 @@ class HashRouter {
 
 	async loadTemplate(templatePath, params, onLoad) {
 		try {
+			if (this.currentTemplate) {
+				const fragment = document.createDocumentFragment();
+				while (this.root.firstChild) {
+					fragment.appendChild(this.root.firstChild);
+				}
+				this.templateCache.set(this.currentTemplate, fragment);
+			}
+
+			if (this.templateCache.has(templatePath)) {
+				this.root.innerHTML = "";
+				this.root.appendChild(this.templateCache.get(templatePath));
+				this.currentTemplate = templatePath;
+				onLoad(false, params);
+				return;
+			}
+
 			const res = await fetch(templatePath);
 			if (res.status >= 300) {
 				throw Error(`Fetch status is not success (${res.status})`);
 			}
-
+			
 			const html = await res.text();
 			this.root.innerHTML = html;
-			onLoad(params);
+			this.currentTemplate = templatePath;
+			onLoad(true, params);
 
 		} catch(err) {
 			console.error("Failed to load fragment:", err);

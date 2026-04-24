@@ -1,0 +1,37 @@
+<link rel="stylesheet" href="./fragments/main.css">
+
+<div id="items">
+	<div id="itemsList">
+		<div id="listTabs">
+			<button class="list-tab-button start" id="demonsTabButton" data-tab="demons">
+				<span>Demons</span>
+			</button>
+			<button class="list-tab-button end" id="leaderboardTabButton" data-tab="leaderboard">
+				<span>Leaderboard</span>
+			</button>
+		</div>
+
+		<div class="list-view" id="demonsList" hidden></div>
+		<div class="list-view" id="leaderboardList" hidden></div>
+	</div>
+
+	<div id="itemsView">
+		<!-- TODO -->
+	</div>
+</div>
+
+<template id="demonEntryTemplate">
+	<div class="list-entry demon-entry">
+		<div class="level-thumbnail-view">
+			<img class="level-thumbnail" src="THUMBNAIL_URI_HERE">
+		</div>
+		<div class="level-desc-view">
+			<h3 class="level-name-view">#<span class="level-rank">1</span> - <span class="level-name">LEVEL_NAME_HERE</span>
+			</h3>
+			<p class="level-publisher-view">By <span class="level-publisher">LEVEL_PUBLISHER_NAME_HERE</span></p>
+		</div>
+		<div class="level-difficulty-view">
+			<span class="level-difficulty">LEVEL_DIFFICULTY_HERE</span>
+		</div>
+	</div>
+</template>

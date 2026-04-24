@@ -1,0 +1,218 @@
+/* GENERAL */
+
+#items {
+	display: inline-flex;
+	width: 100%;
+	height: 100%;
+}
+
+/* ITEMS LIST */
+
+#itemsList {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--spacing) * 2.5);
+	width: calc(100%/3);
+	height: 100%;
+	padding: calc(var(--spacing) * 5);
+	background: var(--color-bg-02);
+	position: relative;
+}
+
+#itemsList::after {
+	content: "";
+	display: block;
+	position: absolute;
+	background: var(--gradient-dw-accent);
+	width: calc(var(--spacing) * 0.7);
+	height: 100%;
+	right: 0;
+	top: 0;
+	transform: translateX(50%);
+}
+
+#itemsView {
+	width: calc(100%/3*2);
+	height: 100%;
+	position: relative;
+}
+
+/* LIST TABS */
+
+#listTabs {
+	display: inline-flex;
+	gap: calc(var(--spacing) * 1.5);
+	width: 100%;
+	padding: calc(var(--spacing) * 1.5);
+	border-radius: var(--radius-xl);
+	border: 1px transparent solid;
+	background: var(--color-bg-03);
+}
+
+/* LIST TAB BUTTON */
+
+.list-tab-button {
+	color: var(--text-color-02);
+	font-size: var(--text-nm);
+	font-weight: var(--font-semi);
+	flex-grow: 1;
+	padding: calc(var(--spacing) * 5);
+	border-radius: var(--radius-nm);
+	background: transparent;
+	cursor: pointer;
+	text-align: center;
+	transition: ease 0.3s;
+}
+
+.list-tab-button:hover {
+	color: var(--text-color-01);
+	background: color-mix(in oklab, transparent 90%, var(--text-color-01) 10%);
+}
+
+.list-tab-button.selected {
+	color: var(--color-dw-accent-01);
+	background: color-mix(in oklab, transparent 90%, var(--text-color-01) 10%);
+}
+
+.list-tab-button.start {
+	border-top-left-radius: var(--radius-lg);
+	border-bottom-left-radius: var(--radius-lg);
+}
+
+.list-tab-button.end {
+	border-top-right-radius: var(--radius-lg);
+	border-bottom-right-radius: var(--radius-lg);
+}
+
+/* LIST VIEW */
+
+.list-view {
+	display: flex;
+	flex-direction: column;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	width: 100%;
+	flex-grow: 1;
+	gap: calc(var(--spacing) * 6);
+	padding: calc(var(--spacing) * 4);
+	border-radius: var(--radius-xl);
+	border: 1px transparent solid;
+	background: var(--color-bg-03);
+}
+
+/* LIST ENTRY */
+
+.list-entry {
+	display: inline-flex;
+	width: 100%;
+	gap: calc(var(--spacing) * 6);
+	padding: calc(var(--spacing) * 6);
+	border-radius: var(--radius-2xl);
+	border: 1px transparent solid;
+	background: linear-gradient(var(--color-bg-04)) var(--border-dw-accent);
+	align-items: center;
+	cursor: pointer;
+}
+
+.list-entry.selected {
+	border: 0;
+	background: var(--gradient-dw-accent);
+	box-shadow: var(--box-shadow-faint-glow-dw-accent);
+}
+
+.list-entry.selected {
+	color: white;
+}
+
+.list-entry .level-thumbnail-view {
+	aspect-ratio: calc(16/9);
+	width: calc(var(--spacing) * 40);
+	border-radius: var(--radius-lg);
+	box-shadow: var(--box-shadow-faint-glow-dw-accent);
+	overflow: hidden;
+	flex-shrink: 0;
+}
+
+.list-entry .level-thumbnail-view img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.list-entry .level-desc-view {
+	flex: 1;
+	min-width: 0;
+}
+
+.list-entry .level-desc-view h3,
+.list-entry .level-desc-view p {
+	font-size: var(--text-nm);
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.list-entry .level-desc-view p {
+	font-size: var(--text-sm);
+}
+
+.list-entry .level-desc-view .level-publisher-view .level-publisher {
+	font-weight: var(--font-semi);
+	font-style: italic;
+}
+
+.list-entry .level-difficulty-view {
+	width: max-content;
+	text-align: right;
+	flex-shrink: 0;
+}
+
+@media (max-width: 1200px) {
+	#items {
+		display: block;
+	}
+
+	#itemsList {
+		position: absolute;
+		margin: auto;
+		width: 100%;
+		height: 100%;
+	}
+
+	#itemsList::after {
+		display: none;
+	}
+
+	#itemsView {
+		display: none;
+		position: absolute;
+		margin: auto;
+		width: 100%;
+		height: 100%;
+	}
+}
+
+@media (max-width: 850px) {
+	.list-entry {
+		padding: calc(var(--spacing) * 3);
+		gap: calc(var(--spacing) * 3);
+		border-radius: var(--radius-lg);
+	}
+	
+	.list-entry .level-thumbnail-view {
+		width: calc(var(--spacing) * 30);
+	}
+
+	.list-entry .level-difficulty-view {
+		width: min-content;
+		font-size: var(--text-sm);
+	}
+
+	.list-entry .level-desc-view h3 {
+		font-size: var(--text-sm);
+	}
+
+	.list-entry .level-desc-view p {
+		font-size: var(--text-xs);
+	}
+}

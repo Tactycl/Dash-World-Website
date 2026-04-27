@@ -192,7 +192,7 @@
 	overflow-y: scroll;
 }
 
-/* LEVEL VIEW */
+/* LEVEL VIEW HEADER */
 
 #levelViewHeader {
 	display: inline-flex;
@@ -301,6 +301,21 @@
 	overflow-x: auto;
 }
 
+.level-info-buttons {
+	display: inline-flex;
+	gap: calc(var(--spacing) * 4);
+}
+
+#levelViewHeader .level-stats-container .level-info-buttons {
+	margin-top: calc(var(--spacing) * 6);
+}
+
+.level-info-buttons button {
+	width: max-content;
+}
+
+/* LEVEL VIEW CONTENT */
+
 #levelViewContent {
 	display: flex;
 	flex-direction: column;
@@ -309,9 +324,45 @@
 	margin-bottom: calc(var(--spacing) * 8);
 }
 
-#copyLevelIdButton {
-	width: max-content;
-	margin-top: calc(var(--spacing) * 6);
+/* LEVEL VIEW RECORDS */
+
+#levelViewRecords .records-title {
+	color: var(--text-color-02);
+	font-size: var(--text-sm);
+}
+
+#levelViewRecords .records-title .record-requirement { color: color-mix(in oklab, var(--color-dw-accent-01) 50%, var(--text-color-01) 50%); }
+#levelViewRecords .records-title .verified-victors { color: color-mix(in oklab, rgb(255, 162, 0) 50%, var(--text-color-01) 50%); }
+#levelViewRecords .records-title .verified-records { color: color-mix(in oklab, rgb(0, 255, 0) 50%, var(--text-color-01) 50%); }
+
+#levelViewRecords .records-table {
+	margin-top: calc(var(--spacing) * 4);
+}
+
+.records-table {
+	width: 100%;
+	border-radius: var(--radius-2xl);
+	background-color: var(--color-bg-03);
+	padding-inline: calc(var(--spacing) * 2);
+	border: 1px transparent solid;
+	background: linear-gradient(var(--color-bg-03)) var(--border-dw-accent);
+}
+
+.records-table thead th {
+	color: var(--text-color-02);
+	font-weight: var(--font-thin);
+	font-size: var(--text-nm);
+	padding: calc(var(--spacing) * 2);
+	width: calc(100%/3);
+	text-align: center;
+}
+
+.records-table tbody td {
+	font-weight: var(--font-nm);
+	font-size: var(--text-nm);
+	padding: calc(var(--spacing) * 2);
+	width: calc(100%/3);
+	text-align: center;
 }
 
 @media (max-width: 1200px) {

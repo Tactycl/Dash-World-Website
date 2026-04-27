@@ -154,6 +154,8 @@ async function loadView(levelId) {
 
 	const result = response["result"];
 
+	// LEVEL VIEW HEADER
+
 	const levelViewThumbnail = root.querySelector("#levelViewHeader .level-video-container .level-video");
 	loadVideoIFrame(levelViewThumbnail, getVideoData(result["level"]["videoProofUrl"]));
 
@@ -193,7 +195,29 @@ async function loadView(levelId) {
 
 	const levelSong = root.querySelector("#levelViewHeader .level-info-grid .level-song");
 	levelSong.innerText = result["level"]["songName"];
+
+	const copyLevelIdButton = root.querySelector("#copyLevelIdButton");
+	const copyLevelIdButtonSpan = root.querySelector("#copyLevelIdButton span");
+	copyLevelIdButton.addEventListener("click", () => {
+		navigator.clipboard.writeText(String(levelId)).then(() => {
+			copyLevelIdButtonSpan.innerText = "Copied!";
+			setTimeout(() => {
+				copyLevelIdButtonSpan.innerText = "Copy Level ID";
+			}, 750);
+
+		}).catch(err => {
+			copyLevelIdButtonSpan.innerText = "Failed to copy!";
+			setTimeout(() => {
+				copyLevelIdButtonSpan.innerText = "Copy Level ID";
+			}, 750);
+		});
+	});
+
+	const submitRecordButton = root.querySelector("#submitRecordButton");
+	submitRecordButton.href = `#submit/${levelId}`;
 	
+	// LEVEL VIEW CONTENT
+
 	const levelDownloads = root.querySelector("#levelViewContent .level-info-grid .level-downloads");
 	levelDownloads.innerText = getCommaNumber(result["level"]["downloads"]);
 
@@ -222,22 +246,16 @@ async function loadView(levelId) {
 	const levelLdms = root.querySelector("#levelViewContent .level-info-grid .level-ldms");
 	levelLdms.innerText = result["ldms"].length == 0 ? "None" : ldmsString;
 
-	const copyLevelIdButton = root.querySelector("#copyLevelIdButton");
-	const copyLevelIdButtonSpan = root.querySelector("#copyLevelIdButton span");
-	copyLevelIdButton.addEventListener("click", () => {
-		navigator.clipboard.writeText(String(levelId)).then(() => {
-			copyLevelIdButtonSpan.innerText = "Copied!";
-			setTimeout(() => {
-				copyLevelIdButtonSpan.innerText = "Copy Level ID";
-			}, 750);
+	// LEVEL VIEW RECORDS
 
-		}).catch(err => {
-			copyLevelIdButtonSpan.innerText = "Failed to copy!";
-			setTimeout(() => {
-				copyLevelIdButtonSpan.innerText = "Copy Level ID";
-			}, 750);
-		});
-	});
+	const recordRequirement = root.querySelector("#levelViewRecords .records-title .record-requirement");
+	recordRequirement.innerText = `${result["level"]["percentage10thPoints"] ?? "100"}%`;
+
+	const verifiedVictors = root.querySelector("#levelViewRecords .records-title .verified-victors");
+	verifiedVictors.innerText = "0";
+
+	const verifiedRecords = root.querySelector("#levelViewRecords .records-title .verified-records");
+	verifiedRecords.innerText = "0";
 }
 
 function updateSelectedMainPageDemon() {
@@ -403,6 +421,15 @@ router.add("leaderboard/:id", {
 	onLoad: onLoadLeaderboard
 });
 
+// Submit
+
+router.add("submit", {
+	template: "/demonlist/fragments/submit.html"
+});
+
+router.add("submit/:id", {
+	template: "/demonlist/fragments/submit.html"
+})
 
 // Other
 router.add("terms", {

@@ -15,13 +15,15 @@
 		<div class="list-view" id="leaderboardList" hidden></div>
 	</div>
 
-	<div id="itemsView">
-		<!-- TODO -->
+	<div id="itemView">
+		<div id="itemViewContainer">
+
+		</div>
 	</div>
 </div>
 
-<template id="demonEntryTemplate">
-	<div class="list-entry demon-entry">
+<template id="levelEntryTemplate">
+	<div class="list-entry">
 		<div class="level-thumbnail-view">
 			<img class="level-thumbnail" src="THUMBNAIL_URI_HERE">
 		</div>
@@ -32,6 +34,45 @@
 		</div>
 		<div class="level-difficulty-view">
 			<span class="level-difficulty">LEVEL_DIFFICULTY_HERE</span>
+		</div>
+	</div>
+</template>
+
+<template id="levelViewTemplate">
+	<div id="levelViewHeader" class="separator">
+		<div class="level-video-container">
+			<iframe class="level-video"></iframe>
+		</div>
+		
+		<div class="level-stats-container">
+			<div class="level-front separator">
+				<h2 class="level-title"></h2>
+				<p class="level-contributors">by <span class="level-publisher"></span></p>
+			</div>
+
+			<div class="level-info-pills"></div>
+
+			<div class="level-info-grid">
+				<div class="level-info-space">
+					<p class="level-info-space-title separator">CREATORS</p>
+					<p class="level-info-space-value level-creators"></p>
+				</div>
+
+				<div class="level-info-space">
+					<p class="level-info-space-title separator">VERIFIER</p>
+					<p class="level-info-space-value level-verifier"></p>
+				</div>
+
+				<div class="level-info-space">
+					<p class="level-info-space-title separator">UPLOAD DATE</p>
+					<p class="level-info-space-value level-upload-date"></p>
+				</div>
+
+				<div class="level-info-space">
+					<p class="level-info-space-title separator">SONG</p>
+					<p class="level-info-space-value level-song"></p>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>

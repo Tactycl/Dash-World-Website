@@ -7,7 +7,7 @@ const themeButton = document.getElementById("themeButton");
 const themeIcon = document.getElementById("themeIcon");
 const themeLabel = document.getElementById("themeLabel");
 
-const DW_THEME_KEY = "dw_theme";
+const DW_THEME_KEY = "dwTheme";
 const THEME_ICONS = {
 	"dark": "/img/dark.svg",
 	"light": "/img/light.svg",

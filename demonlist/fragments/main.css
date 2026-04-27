@@ -31,7 +31,7 @@
 	transform: translateX(50%);
 }
 
-#itemsView {
+#itemView {
 	width: calc(100%/3*2);
 	height: 100%;
 	position: relative;
@@ -112,6 +112,11 @@
 	background: linear-gradient(var(--color-bg-04)) var(--border-dw-accent);
 	align-items: center;
 	cursor: pointer;
+	transition: 0.1s ease;
+}
+
+.list-entry:active {
+	scale: 0.975;
 }
 
 .list-entry.selected {
@@ -167,6 +172,135 @@
 	flex-shrink: 0;
 }
 
+/* ITEM VIEW */
+
+#itemView {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: calc(var(--spacing) * 4);
+}
+
+#itemViewContainer {
+	width: 100%;
+	height: 100%;
+	border-radius: var(--radius-2xl);
+	border: 1px transparent solid;
+	background: linear-gradient(var(--color-bg-04)) var(--border-dw-accent);
+	padding: calc(var(--spacing) * 6);
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+
+/* LEVEL VIEW */
+
+#levelViewHeader {
+	display: inline-flex;
+	width: 100%;
+	padding-bottom: calc(var(--spacing) * 8);
+	margin-bottom: calc(var(--spacing) * 8);
+}
+
+.level-video-container {
+	overflow: hidden;
+	aspect-ratio: calc(16/9);
+	width: 50%;
+	border-radius: var(--radius-xl);
+	border: 1px transparent solid;
+	background: linear-gradient(var(--color-bg-04)) var(--border-dw-accent);
+}
+
+#levelViewHeader .level-video-container .level-video {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+#levelViewHeader .level-stats-container {
+	display: flex;
+	flex-direction: column;
+	width: 50%;
+	padding-left: calc(var(--spacing) * 4);
+	padding-top: var(--spacing);
+	padding-bottom: var(--spacing);
+}
+
+#levelViewHeader .level-stats-container .level-front {
+	padding-bottom: calc(var(--spacing) * 4);
+	margin-bottom: calc(var(--spacing) * 4);
+}
+
+.level-stats-container .level-title {
+	margin-bottom: calc(var(--spacing) * 0.5);
+}
+
+.level-stats-container .level-contributors {
+	color: var(--text-color-02);
+	font-weight: var(--font-nm);
+	font-size: var(--text-sm);
+}
+
+#levelViewHeader .level-stats-container .level-info-pills {
+	display: inline-flex;
+	gap: calc(var(--spacing) * 3);
+	width: 100%;
+}
+
+.level-info-pills .pill {
+	box-sizing: content-box;
+	height: var(--text-sm);
+	padding: calc(var(--spacing) * 2);
+	padding-inline: calc(var(--spacing) * 5);
+	border-radius: 16px;
+	font-size: var(--text-sm);
+	color: white;
+}
+
+.level-info-pills .pill.extreme-demon { background: rgb(255, 66, 66); }
+.level-info-pills .pill.insane-demon { background: rgb(255, 66, 142); }
+.level-info-pills .pill.hard-demon { background: rgb(255, 66, 255); }
+.level-info-pills .pill.medium-demon { background: rgb(104, 66, 255); }
+.level-info-pills .pill.easy-demon { background: rgb(66, 157, 255); }
+
+.level-info-pills .pill.mythic-rate { background: rgb(0, 106, 255); }
+.level-info-pills .pill.legendary-rate { background: rgb(202, 0, 155); }
+.level-info-pills .pill.epic-rate { background: rgb(20, 202, 0); }
+.level-info-pills .pill.feature-rate { background: rgb(255, 166, 0); }
+.level-info-pills .pill.star-rate { background: rgb(159, 64, 0); }
+
+#levelViewHeader .level-stats-container .level-info-grid {
+	margin-top: calc(var(--spacing) * 4);
+}
+
+.level-info-grid {
+	display: grid;
+	grid-template-columns: calc(50% - var(--spacing) * 2) calc(50% - var(--spacing) * 2);
+	gap: calc(var(--spacing) * 4);
+}
+
+.level-info-grid .level-info-space {
+	display: flex;
+	flex-direction: column;
+	overflow-x: auto;
+	border-radius: var(--radius-xl);
+	border: 1px transparent solid;
+	background: linear-gradient(var(--color-bg-03)) var(--border-dw-accent);
+	padding: calc(var(--spacing) * 4);
+}
+
+.level-info-grid .level-info-space .level-info-space-title {
+	color: var(--text-color-02);
+	font-weight: var(--font-thin);
+	font-size: var(--text-sm);
+	padding-bottom: var(--spacing);
+	margin-bottom: calc(var(--spacing) * 1.5);
+}
+
+.level-info-grid .level-info-space .level-info-space-value {
+	white-space: nowrap;
+		overflow-x: auto;
+}
+
 @media (max-width: 1200px) {
 	#items {
 		display: block;
@@ -183,12 +317,19 @@
 		display: none;
 	}
 
-	#itemsView {
+	#itemView {
 		display: none;
 		position: absolute;
 		margin: auto;
 		width: 100%;
 		height: 100%;
+		padding: 0;
+	}
+
+	#itemViewContainer {
+		border-radius: 0;
+		border: 0 transparent;
+		background: var(--color-bg-04);
 	}
 }
 

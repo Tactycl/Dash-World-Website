@@ -1,4 +1,71 @@
+class LevelCache {
+	constructor(ttlMs = 1000 * 60 * 60) {
+		this.ttlMs = ttlMs;
+
+		let cacheValues = localStorage.getItem("dwLevelCache");
+		if (cacheValues) {
+			cacheValues = JSON.parse(atob(cacheValues));
+		}
+
+		this.cache = cacheValues ?? {};
+	}
+
+	isExpired(entry) {
+		return !entry || (Date.now() > entry.expiry);
+	}
+
+	updateLocalStorageCache() {
+		localStorage.setItem("dwLevelCache", btoa(JSON.stringify(this.cache)));
+	}
+
+	async loadDemonData(id) {
+		try {
+			const response = await fetch(`https://api.tarylem.com/v1/demonlist/demons/${id}`);
+			if (!response.ok) {
+				throw new Error(`Response status: ${response.status}`);
+			}
+
+			const result = await response.json();
+
+			this.cache[id] = {
+				data: result,
+				expiry: Date.now() + this.ttlMs
+			};
+
+			this.updateLocalStorageCache();
+
+			return result;
+
+		} catch (error) {
+			console.error(error.message);
+		}
+
+		return null;
+	}
+
+	getLevelData(id) {
+		const entry = this.cache[id];
+
+		if (this.isExpired(entry)) {
+			delete this.cache[id];
+			this.updateLocalStorageCache();
+			return null;
+		}
+
+		return entry.data;
+	}
+}
+
 const router = new HashRouter("#content");
+
+const levelCache = new LevelCache();
+
+const demonListState = {
+	cursor: null,
+	isLoading: false,
+	hasMore: true,
+	selectedLevelId: null
+};
 
 function switchMainPageView(tabName) {
 	const views = document.querySelectorAll(".list-view");
@@ -55,7 +122,89 @@ function onLoadMain(isReloaded, tabName) {
 	return false;
 }
 
-function updateSelectedMainPageDemon(selectedLevelId) {
+function loadItemView(itemViewTemplateId) {
+	const itemView = document.getElementById("itemViewContainer");
+	const itemViewCurrentView = itemView.getAttribute("data-view");
+	itemView.innerHTML = "";
+
+	if (itemViewTemplateId != null) {
+		const template = document.getElementById(itemViewTemplateId);
+		const node = template.content.cloneNode(true);
+		itemView.append(node);
+		itemView.setAttribute("data-view", itemViewTemplateId);
+
+	} else {
+		itemView.removeAttribute("data-view");
+	}
+
+	return itemView;
+}
+
+async function loadView(levelId) {
+	const itemView = document.getElementById("itemViewContainer");
+	const itemViewCurrentView = itemView.getAttribute("data-view");
+
+	var root = loadItemView("levelViewTemplate");
+
+	var response = levelCache.getLevelData(levelId);
+	if (!response) {
+		response = await levelCache.loadDemonData(levelId);
+		if (!response) return;
+	};
+
+	const result = response["result"];
+	console.log(result);
+
+	const levelViewThumbnail = root.querySelector("#levelViewHeader .level-video-container .level-video");
+	loadVideoIFrame(levelViewThumbnail, getVideoData(result["level"]["videoProofUrl"]));
+
+	const levelTitle = root.querySelector("#levelViewHeader .level-title");
+	levelTitle.innerText = result["level"]["name"];
+
+	const levelPublisher = root.querySelector("#levelViewHeader .level-contributors .level-publisher");
+	levelPublisher.innerText = result["level"]["publisherUsername"];
+
+	const levelInfoPills = root.querySelector("#levelViewHeader .level-info-pills");
+	levelInfoPills.innerHTML = "";
+
+	const difficultyReadable = String(splitCamelCase(result["level"]["difficulty"]));
+	const difficultyPill = document.createElement("span");
+	difficultyPill.className = `pill ${difficultyReadable.toLowerCase().replace(" ", "-")}`
+	difficultyPill.innerText = difficultyReadable;
+	levelInfoPills.append(difficultyPill);
+
+	const ratingPill = document.createElement("span");
+	ratingPill.className = `pill ${result["level"]["rating"].toLowerCase()}-rate`
+	ratingPill.innerText = `${result["level"]["rating"]} Rate`;
+	levelInfoPills.append(ratingPill);
+
+	let levelCreatorsString = "";
+	result["level"]["creators"].forEach((element) => {
+		if (levelCreatorsString.length > 0) {
+			levelCreatorsString += ", ";
+		}
+		levelCreatorsString += element["creatorName"];
+	});
+
+	const levelCreators = root.querySelector("#levelViewHeader .level-info-grid .level-creators");
+	levelCreators.innerText = levelCreatorsString;
+
+	const levelVerifier = root.querySelector("#levelViewHeader .level-info-grid .level-verifier");
+	levelVerifier.innerText = result["level"]["verifierUsername"];
+
+	const date = new Date(result["level"]["createdAt"] * 1000);
+	const dd = String(date.getDate()).padStart(2, '0');
+	const mm = String(date.getMonth() + 1).padStart(2, '0');
+	const yyyy = date.getFullYear();
+
+	const levelUploadDate = root.querySelector("#levelViewHeader .level-info-grid .level-upload-date");
+	levelUploadDate.innerText = `${dd}/${mm}/${yyyy} (dd/mm/yyyy)`;
+
+	const levelSong = root.querySelector("#levelViewHeader .level-info-grid .level-song");
+	levelSong.innerText = result["level"]["songName"];
+}
+
+function updateSelectedMainPageDemon() {
 	const list = document.getElementById("demonsList");
 	if (!list) return;
 
@@ -63,8 +212,10 @@ function updateSelectedMainPageDemon(selectedLevelId) {
 	elements.forEach((element) => {
 		const rank = Number(element.getAttribute("data-rank"));
 		const levelId = Number(element.getAttribute("data-id"));
-		if ((selectedLevelId && levelId == selectedLevelId) || (!selectedLevelId && rank == 1)) {
+		if ((levelId == demonListState.selectedLevelId) || (!demonListState.selectedLevelId && rank == 1)) {
+			demonListState.selectedLevelId = levelId;
 			element.classList.add("selected");
+			loadView(levelId);
 
 		} else {
 			element.classList.remove("selected");
@@ -72,14 +223,14 @@ function updateSelectedMainPageDemon(selectedLevelId) {
 	});
 }
 
-function loadDemons(selectedLevelId, response) {
-	const demonEntryTemplate = document.getElementById("demonEntryTemplate");
+function loadDemons(response) {
+	const levelEntryTemplate = document.getElementById("levelEntryTemplate");
 	const list = document.getElementById("demonsList");
-	if (!demonEntryTemplate || !list) return;
+	if (!levelEntryTemplate || !list) return;
 
 	const result = response["result"];
 	result.forEach(async (element) => {
-		const node = demonEntryTemplate.content.cloneNode(true);
+		const node = levelEntryTemplate.content.cloneNode(true);
 		const root = node.firstElementChild;
 
 		const videoData = getVideoData(element["videoProofUrl"]);
@@ -106,8 +257,9 @@ function loadDemons(selectedLevelId, response) {
 		root.setAttribute("data-rank", element["placementRank"]);
 		root.setAttribute("data-created", element["createdAt"]);
 
-		if ((selectedLevelId && element["levelId"] == selectedLevelId) || (!selectedLevelId && element["placementRank"] == 1)) {
+		if ((element["levelId"] == demonListState.selectedLevelId) || (!demonListState.selectedLevelId && element["placementRank"] == 1)) {
 			root.classList.add("selected");
+			loadView(element["levelId"]);
 		}
 
 		root.addEventListener("click", () => {
@@ -118,30 +270,58 @@ function loadDemons(selectedLevelId, response) {
 	});
 }
 
-async function loadDemonsList(selectedLevelId, cursor) {
+async function loadDemonsList() {
+	if (demonListState.isLoading) return;
+	if (!demonListState.hasMore) return;
+	demonListState.isLoading = true;
+
 	try {
-		const demonsResponse = await fetch(`https://api.tarylem.com/v1/demonlist/demons?limit=75${cursor ? `&cursor=${cursor}` : ""}`);
-		if (!demonsResponse.ok) {
-			throw new Error(`Response status: ${demonsResponse.status}`);
+		const cursor = demonListState.cursor;
+
+		const response = await fetch(`https://api.tarylem.com/v1/demonlist/demons?limit=25${cursor ? `&cursor=${cursor}` : ""}`);
+		if (!response.ok) {
+			throw new Error(`Response status: ${response.status}`);
 		}
 
-		const result = await demonsResponse.json();
-		loadDemons(selectedLevelId, result)
+		const result = await response.json();
+		loadDemons(result)
+
+		demonListState.cursor = result.nextCursor ?? null;
+		demonListState.hasMore = !!result.nextCursor;
 
 	} catch(error) {
 		console.error(error.message);
+		
+	} finally {
+		demonListState.isLoading = false;
 	}
+}
+
+function initInfiniteScroll() {
+	const list = document.getElementById("demonsList");
+	if (!list) return;
+
+	list.addEventListener("scroll", () => {
+		const isAtBottom = list.scrollTop + list.clientHeight >= list.scrollHeight;
+		if (isAtBottom) {
+			loadDemonsList();
+		}
+	})
 }
 
 async function onLoadDemons(isReloaded, { id }) {
 	const isTabFirstTime = onLoadMain(isReloaded, "demons");
-	
-	const selectedLevelId = id ? Number(id) : null;
+	demonListState.selectedLevelId = id ? Number(id) : null;
+
 	if (isTabFirstTime) {
-		loadDemonsList(selectedLevelId);
+		demonListState.cursor = null;
+		demonListState.hasMore = true;
+
+		await loadDemonsList();
+		initInfiniteScroll();
 
 	} else {
-		updateSelectedMainPageDemon(selectedLevelId)
+		updateSelectedMainPageDemon();
 	}
 }
 
@@ -156,6 +336,8 @@ function onLoadLeaderboard(isReloaded, { id }) {
 		title.id = "errorRouterNotification";
 		list.appendChild(title);
 	}
+
+	loadItemView(null);
 }
 
 // Demons

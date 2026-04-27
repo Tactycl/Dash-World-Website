@@ -192,13 +192,19 @@ async function loadView(levelId) {
 	const levelVerifier = root.querySelector("#levelViewHeader .level-info-grid .level-verifier");
 	levelVerifier.innerText = result["level"]["verifierUsername"];
 
+	const months = [
+		"January", "February", "March", "April", "May", "June",
+		"July", "August", "September", "October", "November", "December"
+	];
+
 	const date = new Date(result["level"]["createdAt"] * 1000);
-	const dd = String(date.getDate()).padStart(2, '0');
-	const mm = String(date.getMonth() + 1).padStart(2, '0');
-	const yyyy = date.getFullYear();
+	
+	const day = String(date.getDate()).padStart(2, "0");
+	const dayLastChar = day.charAt(day.length - 1);
+	const daySuffix = dayLastChar == 1 ? "st" : (dayLastChar == 2 ? "nd" : (dayLastChar == 3 ? "rd" : "th"))
 
 	const levelUploadDate = root.querySelector("#levelViewHeader .level-info-grid .level-upload-date");
-	levelUploadDate.innerText = `${dd}/${mm}/${yyyy} (dd/mm/yyyy)`;
+	levelUploadDate.innerText = `${day}${daySuffix} ${months[date.getMonth()]} ${date.getFullYear() }`;
 
 	const levelSong = root.querySelector("#levelViewHeader .level-info-grid .level-song");
 	levelSong.innerText = result["level"]["songName"];

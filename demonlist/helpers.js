@@ -113,3 +113,31 @@ function loadVideoIFrame(iframe, video, timestamp = 0) {
 		iframe.setAttribute("allowFullscreen", true);
 	}
 }
+
+function getDateStringFromDate(date) {
+	const months = [
+		"January", "February", "March", "April", "May", "June",
+		"July", "August", "September", "October", "November", "December"
+	];
+
+	const day = String(date.getDate());
+	const dayLastChar = day.charAt(day.length - 1);
+	const daySuffix = dayLastChar == 1 ? "st" : (dayLastChar == 2 ? "nd" : (dayLastChar == 3 ? "rd" : "th"));
+
+	return `${day}${daySuffix} ${months[date.getMonth()]} ${date.getFullYear()}`;
+}
+
+function getCommaNumber(number) {
+	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function formatDuration(seconds) {
+	const minutes = Math.floor(seconds / 60);
+	const remainingSeconds = seconds % 60;
+
+	if (minutes > 0) {
+		return `${minutes}m ${remainingSeconds}s`;
+	}
+
+	return `${remainingSeconds}s`;
+}

@@ -153,7 +153,6 @@ async function loadView(levelId) {
 	};
 
 	const result = response["result"];
-	console.log(result);
 
 	const levelViewThumbnail = root.querySelector("#levelViewHeader .level-video-container .level-video");
 	loadVideoIFrame(levelViewThumbnail, getVideoData(result["level"]["videoProofUrl"]));
@@ -178,13 +177,9 @@ async function loadView(levelId) {
 	ratingPill.innerText = `${result["level"]["rating"]} Rate`;
 	levelInfoPills.append(ratingPill);
 
-	let levelCreatorsString = "";
-	result["level"]["creators"].forEach((element) => {
-		if (levelCreatorsString.length > 0) {
-			levelCreatorsString += ", ";
-		}
-		levelCreatorsString += element["creatorName"];
-	});
+	const levelCreatorsString = result["level"]["creators"]
+		.map(c => c["creatorName"])
+		.join(", ");
 
 	const levelCreators = root.querySelector("#levelViewHeader .level-info-grid .level-creators");
 	levelCreators.innerText = levelCreatorsString;
@@ -192,22 +187,57 @@ async function loadView(levelId) {
 	const levelVerifier = root.querySelector("#levelViewHeader .level-info-grid .level-verifier");
 	levelVerifier.innerText = result["level"]["verifierUsername"];
 
-	const months = [
-		"January", "February", "March", "April", "May", "June",
-		"July", "August", "September", "October", "November", "December"
-	];
-
 	const date = new Date(result["level"]["createdAt"] * 1000);
-	
-	const day = String(date.getDate());
-	const dayLastChar = day.charAt(day.length - 1);
-	const daySuffix = dayLastChar == 1 ? "st" : (dayLastChar == 2 ? "nd" : (dayLastChar == 3 ? "rd" : "th"))
-
 	const levelUploadDate = root.querySelector("#levelViewHeader .level-info-grid .level-upload-date");
-	levelUploadDate.innerText = `${day}${daySuffix} ${months[date.getMonth()]} ${date.getFullYear() }`;
+	levelUploadDate.innerText = getDateStringFromDate(date);
 
 	const levelSong = root.querySelector("#levelViewHeader .level-info-grid .level-song");
 	levelSong.innerText = result["level"]["songName"];
+	
+	const levelDownloads = root.querySelector("#levelViewContent .level-info-grid .level-downloads");
+	levelDownloads.innerText = getCommaNumber(result["level"]["downloads"]);
+
+	const levelLikes = root.querySelector("#levelViewContent .level-info-grid .level-likes");
+	levelLikes.innerText = getCommaNumber(result["level"]["likes"]);
+
+	const levelObjects = root.querySelector("#levelViewContent .level-info-grid .level-objects");
+	levelObjects.innerText = getCommaNumber(result["level"]["objectCount"]);
+
+	const levelCopy = root.querySelector("#levelViewContent .level-info-grid .level-copy");
+	levelCopy.innerText = (result["level"]["isCopyable"] == 0 ? "Not Copyable" : (result["level"]["isCopyPasswordProtected"] == 1 ? "Copyable via Password" : "Freely Copyable"));
+
+	const levelLength = root.querySelector("#levelViewContent .level-info-grid .level-length");
+	levelLength.innerText = formatDuration(result["level"]["length"]);
+
+	const levelVersion = root.querySelector("#levelViewContent .level-info-grid .level-version");
+	levelVersion.innerText = getCommaNumber(result["level"]["version"]);
+
+	const levelCopiedFrom = root.querySelector("#levelViewContent .level-info-grid .level-copied-from");
+	levelCopiedFrom.innerText = result["level"]["copiedId"] == null ? "None" : result["level"]["copiedId"];
+
+	const ldmsString = result["ldms"]
+		.map(c => `${c["levelName"]} (${c["ldmLevelId"]})`)
+		.join(", ");
+
+	const levelLdms = root.querySelector("#levelViewContent .level-info-grid .level-ldms");
+	levelLdms.innerText = result["ldms"].length == 0 ? "None" : ldmsString;
+
+	const copyLevelIdButton = root.querySelector("#copyLevelIdButton");
+	const copyLevelIdButtonSpan = root.querySelector("#copyLevelIdButton span");
+	copyLevelIdButton.addEventListener("click", () => {
+		navigator.clipboard.writeText(String(levelId)).then(() => {
+			copyLevelIdButtonSpan.innerText = "Copied!";
+			setTimeout(() => {
+				copyLevelIdButtonSpan.innerText = "Copy Level ID";
+			}, 750);
+
+		}).catch(err => {
+			copyLevelIdButtonSpan.innerText = "Failed to copy!";
+			setTimeout(() => {
+				copyLevelIdButtonSpan.innerText = "Copy Level ID";
+			}, 750);
+		});
+	});
 }
 
 function updateSelectedMainPageDemon() {

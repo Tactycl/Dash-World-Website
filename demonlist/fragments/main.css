@@ -395,6 +395,33 @@
 		border: 0 transparent;
 		background: var(--color-bg-04);
 	}
+
+	#levelViewHeader {
+		display: flex;
+		flex-direction: column;
+	}
+
+	#levelViewHeader .level-video-container,
+	#levelViewHeader .level-stats-container {
+		width: 100%;
+	}
+
+	#levelViewHeader .level-stats-container {
+		padding-top: 0;
+		padding-bottom: 0;
+		padding-left: 0;
+		margin-top: calc(var(--spacing) * 4);
+	}
+
+	#levelViewHeader .level-stats-container .level-title,
+	#levelViewHeader .level-stats-container .level-contributors {
+		text-align: center;
+	}
+
+	#levelViewHeader .level-stats-container .level-info-pills,
+	#levelViewHeader .level-stats-container .level-info-buttons {
+		justify-content: center;
+	}
 }
 
 @media (max-width: 850px) {

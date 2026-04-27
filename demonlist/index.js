@@ -199,7 +199,7 @@ async function loadView(levelId) {
 
 	const date = new Date(result["level"]["createdAt"] * 1000);
 	
-	const day = String(date.getDate()).padStart(2, "0");
+	const day = String(date.getDate());
 	const dayLastChar = day.charAt(day.length - 1);
 	const daySuffix = dayLastChar == 1 ? "st" : (dayLastChar == 2 ? "nd" : (dayLastChar == 3 ? "rd" : "th"))
 

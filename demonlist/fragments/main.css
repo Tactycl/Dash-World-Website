@@ -328,6 +328,7 @@
 	padding: calc(var(--spacing) * 2);
 	margin-left: auto;
 	background: transparent;
+	filter: var(--icon-filter);
 }
 
 #levelViewMobileActions .close-button img {

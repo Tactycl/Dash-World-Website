@@ -39,6 +39,10 @@
 </template>
 
 <template id="levelViewTemplate">
+	<div id="levelViewMobileActions">
+		<button class="close-button"><img src="/img/close.svg"></button>
+	</div>
+
 	<div id="levelViewHeader" class="separator">
 		<div class="level-video-container">
 			<iframe class="level-video"></iframe>
@@ -52,7 +56,7 @@
 
 			<div class="level-info-pills"></div>
 
-			<div class="level-info-grid" style="--columns: 2">
+			<div class="level-info-grid">
 				<div class="level-info-space">
 					<p class="level-info-space-title separator">CREATORS</p>
 					<p class="level-info-space-value level-creators"></p>
@@ -87,7 +91,7 @@
 	</div>
 
 	<div id="levelViewContent" class="separator">
-		<div class="level-info-grid" style="--columns: 4">
+		<div class="level-info-grid">
 			<div class="level-info-space">
 				<p class="level-info-space-title separator">DOWNLOADS</p>
 				<p class="level-info-space-value level-downloads"></p>

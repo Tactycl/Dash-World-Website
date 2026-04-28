@@ -122,6 +122,17 @@ function onLoadMain(isReloaded, tabName) {
 	return false;
 }
 
+function toggleItemView(show = false) {
+	const itemView = document.getElementById("itemView");
+	if (itemView) {
+		let display = show == null ? null : (show == true ? "block" : "none");
+		if (!display) {
+			display = itemView.style.display == "block" ? "none" : "block";
+		}
+		itemView.style.display = display;
+	}
+}
+
 function loadItemView(itemViewTemplateId) {
 	const itemView = document.getElementById("itemViewContainer");
 	const itemViewCurrentView = itemView.getAttribute("data-view");
@@ -153,6 +164,13 @@ async function loadView(levelId) {
 	};
 
 	const result = response["result"];
+
+	// MOBILE ACTIONS
+
+	const levelViewCloseButton = root.querySelector("#levelViewMobileActions .close-button");
+	levelViewCloseButton.addEventListener("click", () => {
+		toggleItemView(false);
+	});
 
 	// LEVEL VIEW HEADER
 
@@ -317,6 +335,7 @@ function loadDemons(response) {
 		}
 
 		root.addEventListener("click", () => {
+			toggleItemView(true);
 			window.location.href = `#demons/${element["levelId"]}`
 		});
 

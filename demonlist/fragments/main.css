@@ -32,6 +32,7 @@
 }
 
 #itemView {
+	display: block;
 	width: calc(100%/3*2);
 	height: 100%;
 	position: relative;
@@ -251,7 +252,7 @@
 	height: var(--text-sm);
 	padding: calc(var(--spacing) * 2);
 	padding-inline: calc(var(--spacing) * 4);
-	border-radius: 16px;
+	border-radius: var(--text-sm);
 	font-size: var(--text-sm);
 	color: white;
 }
@@ -276,6 +277,7 @@
 	display: grid;
 	grid-template-columns: repeat(var(--columns), 1fr);
 	gap: calc(var(--spacing) * 4);
+	--columns: 2;
 }
 
 .level-info-grid .level-info-space {
@@ -316,12 +318,32 @@
 
 /* LEVEL VIEW CONTENT */
 
+#levelViewMobileActions {
+	display: none;
+	width: 100%;
+	margin-bottom: calc(var(--spacing) * 4);
+}
+
+#levelViewMobileActions .close-button {
+	padding: calc(var(--spacing) * 2);
+	margin-left: auto;
+	background: transparent;
+}
+
+#levelViewMobileActions .close-button img {
+	height: calc(var(--spacing) * 8);
+}
+
 #levelViewContent {
 	display: flex;
 	flex-direction: column;
 	width: 100%;
 	padding-bottom: calc(var(--spacing) * 8);
 	margin-bottom: calc(var(--spacing) * 8);
+}
+
+#levelViewContent .level-info-grid {
+	--columns: 4;
 }
 
 /* LEVEL VIEW RECORDS */
@@ -341,7 +363,7 @@
 
 .records-table {
 	width: 100%;
-	border-radius: var(--radius-2xl);
+	border-radius: var(--radius-xl);
 	background-color: var(--color-bg-03);
 	padding-inline: calc(var(--spacing) * 2);
 	border: 1px transparent solid;
@@ -396,6 +418,10 @@
 		background: var(--color-bg-04);
 	}
 
+	#levelViewMobileActions {
+		display: inline-flex;
+	}
+
 	#levelViewHeader {
 		display: flex;
 		flex-direction: column;
@@ -421,6 +447,10 @@
 	#levelViewHeader .level-stats-container .level-info-pills,
 	#levelViewHeader .level-stats-container .level-info-buttons {
 		justify-content: center;
+	}
+
+	#levelViewContent .level-info-grid {
+		--columns: 2;
 	}
 }
 

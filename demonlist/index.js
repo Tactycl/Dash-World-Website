@@ -1,70 +1,18 @@
-class LevelCache {
-	constructor(ttlMs = 1000 * 60 * 60) {
-		this.ttlMs = ttlMs;
-
-		let cacheValues = localStorage.getItem("dwLevelCache");
-		if (cacheValues) {
-			cacheValues = JSON.parse(atob(cacheValues));
-		}
-
-		this.cache = cacheValues ?? {};
-	}
-
-	isExpired(entry) {
-		return !entry || (Date.now() > entry.expiry);
-	}
-
-	updateLocalStorageCache() {
-		localStorage.setItem("dwLevelCache", btoa(JSON.stringify(this.cache)));
-	}
-
-	async loadDemonData(id) {
-		try {
-			const response = await fetch(`https://api.tarylem.com/v1/demonlist/demons/${id}`);
-			if (!response.ok) {
-				throw new Error(`Response status: ${response.status}`);
-			}
-
-			const result = await response.json();
-
-			this.cache[id] = {
-				data: result,
-				expiry: Date.now() + this.ttlMs
-			};
-
-			this.updateLocalStorageCache();
-
-			return result;
-
-		} catch (error) {
-			console.error(error.message);
-		}
-
-		return null;
-	}
-
-	getLevelData(id) {
-		const entry = this.cache[id];
-
-		if (this.isExpired(entry)) {
-			delete this.cache[id];
-			this.updateLocalStorageCache();
-			return null;
-		}
-
-		return entry.data;
-	}
-}
-
 const router = new HashRouter("#content");
-
-const levelCache = new LevelCache();
+const cache = new Cache();
 
 const demonListState = {
 	cursor: null,
 	isLoading: false,
 	hasMore: true,
 	selectedLevelId: null
+};
+
+const historyState = {
+	cursor: null,
+	isLoading: false,
+	hasMore: true,
+	levelId: null
 };
 
 function switchMainPageView(tabName) {
@@ -122,6 +70,83 @@ function onLoadMain(isReloaded, tabName) {
 	return false;
 }
 
+function appendHistoryRows(root, entries) {
+	const tbody = root.querySelector("#levelViewHistory tbody");
+	const template = document.getElementById("levelPositionHistoryItem");
+
+	if (!tbody || !template) return;
+
+	entries.forEach(entry => {
+		const node = template.content.cloneNode(true);
+
+		const date = new Date(entry["validFrom"]);
+
+		node.children[0].children[0].innerText = getDateStringFromDate(date);
+		node.children[0].children[1].innerText = entry["placementRank"];
+
+		var reason = "";
+		var correspondingClass = "";
+		switch (entry["reasonType"]) {
+			case "added":
+				reason = "Added to list";
+				correspondingClass = "position-history-added";
+				break;
+
+			case "otherAddedAbove":
+				reason = `${entry["reasonLevelName"]} was added above`;
+				correspondingClass = "position-history-descended";
+				break;
+
+			case "otherMovedAbove":
+				reason = `${entry["reasonLevelName"]} was moved above`;
+				correspondingClass = "position-history-descended";
+				break;
+
+			case "otherMovedBelow":
+				reason = `${entry["reasonLevelName"]} was moved below`;
+				correspondingClass = "position-history-ascended";
+				break;
+		}
+
+		node.children[0].children[2].innerText = reason;
+		node.children[0].classList.add(correspondingClass);
+
+		tbody.appendChild(node);
+	});
+}
+
+async function loadHistoryPage(root) {
+	if (historyState.isLoading || !historyState.hasMore) return;
+
+	historyState.isLoading = true;
+
+	try {
+		const res = await cache.loadHistory(
+			historyState.levelId,
+			100,
+			historyState.cursor
+		);
+
+		if (!res) return;
+
+		appendHistoryRows(root, res.result);
+
+		historyState.cursor = res.nextCursor ?? null;
+		historyState.hasMore = !!res.nextCursor;
+
+		const loadMoreDiv = root.querySelector("#levelViewHistory .level-table-load-more");
+		if (loadMoreDiv) {
+			loadMoreDiv.style.display = historyState.hasMore ? "" : "none";
+		}
+
+	} catch (e) {
+		console.error(e.message);
+
+	} finally {
+		historyState.isLoading = false;
+	}
+}
+
 function toggleItemView(show = false) {
 	const itemView = document.getElementById("itemView");
 	if (itemView) {
@@ -157,9 +182,9 @@ async function loadView(levelId) {
 
 	var root = loadItemView("levelViewTemplate");
 
-	var response = levelCache.getLevelData(levelId);
+	var response = cache.getLevelData(levelId);
 	if (!response) {
-		response = await levelCache.loadDemonData(levelId);
+		response = await cache.loadDemonData(levelId);
 		if (!response) return;
 	};
 
@@ -274,6 +299,24 @@ async function loadView(levelId) {
 
 	const verifiedRecords = root.querySelector("#levelViewRecords .records-title .verified-records");
 	verifiedRecords.innerText = "0";
+
+	historyState.cursor = null;
+	historyState.hasMore = true;
+	historyState.levelId = levelId;
+
+	const historyRoot = root.querySelector("#levelViewHistory tbody");
+	if (historyRoot) historyRoot.innerHTML = "";
+
+	// HISTORY
+
+	await loadHistoryPage(root);
+
+	const loadMoreBtn = root.querySelector("#levelViewHistory .load-more-button");
+	if (loadMoreBtn) {
+		loadMoreBtn.addEventListener("click", () => {
+			loadHistoryPage(root);
+		});
+	}
 }
 
 function updateSelectedMainPageDemon() {

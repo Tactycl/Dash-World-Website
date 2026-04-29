@@ -349,7 +349,7 @@
 
 /* LEVEL VIEW RECORDS */
 
-#levelViewRecords .records-title {
+.table-title {
 	color: var(--text-color-02);
 	font-size: var(--text-sm);
 }
@@ -358,35 +358,71 @@
 #levelViewRecords .records-title .verified-victors { color: color-mix(in oklab, rgb(255, 162, 0) 50%, var(--text-color-01) 50%); }
 #levelViewRecords .records-title .verified-records { color: color-mix(in oklab, rgb(0, 255, 0) 50%, var(--text-color-01) 50%); }
 
-#levelViewRecords .records-table {
-	margin-top: calc(var(--spacing) * 4);
-}
-
-.records-table {
+.level-table {
 	width: 100%;
+	margin-top: calc(var(--spacing) * 4);
 	border-radius: var(--radius-xl);
 	background-color: var(--color-bg-03);
-	padding-inline: calc(var(--spacing) * 2);
 	border: 1px transparent solid;
 	background: linear-gradient(var(--color-bg-03)) var(--border-dw-accent);
+	overflow: hidden;
+	--columns: 3;
 }
 
-.records-table thead th {
+.level-table table {
+	width: 100%;
+}
+
+.level-table thead::after,
+.level-table tbody tr::after {
+	width: calc(100% - var(--spacing) * 4);
+}
+
+.level-table thead th,
+.level-table tbody td {
+	padding: calc(var(--spacing) * 4);
+	padding-inline: calc(var(--spacing) * 6);
+	width: calc(100% / var(--columns));
+	font-size: var(--text-nm);
+	text-align: center;
+}
+
+.level-table thead th {
 	color: var(--text-color-02);
 	font-weight: var(--font-thin);
-	font-size: var(--text-nm);
-	padding: calc(var(--spacing) * 2);
-	width: calc(100%/3);
-	text-align: center;
 }
 
-.records-table tbody td {
+.level-table tbody td {
 	font-weight: var(--font-nm);
-	font-size: var(--text-nm);
-	padding: calc(var(--spacing) * 2);
-	width: calc(100%/3);
-	text-align: center;
 }
+
+.level-table tbody tr {
+	--background-transparency: 10%;
+	transition: 0.3s ease;
+}
+
+.level-table tbody tr:hover {
+	--background-transparency: 20%;
+}
+
+.level-table .level-table-load-more {
+	display: inline-flex;
+	justify-content: center;
+	width: 100%;
+	padding: calc(var(--spacing) * 4);
+	padding-inline: calc(var(--spacing) * 6);
+}
+
+/* LEVEL VIEW HISTORY */
+
+#levelViewHistory {
+	padding-bottom: calc(var(--spacing) * 8);
+	margin-bottom: calc(var(--spacing) * 8);
+}
+
+#levelViewHistory .position-history-added { background: color-mix(in oklab, transparent, var(--color-dw-accent-01) var(--background-transparency)); }
+#levelViewHistory .position-history-descended { background: color-mix(in oklab, transparent, rgb(255, 66, 66) var(--background-transparency)); }
+#levelViewHistory .position-history-ascended { background: color-mix(in oklab, transparent, rgb(81, 255, 81) var(--background-transparency)); }
 
 @media (max-width: 1200px) {
 	#items {

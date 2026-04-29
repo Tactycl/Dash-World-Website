@@ -134,23 +134,61 @@
 		</div>
 	</div>
 
+	<div id="levelViewHistory" class="separator">
+		<h2>Position History</h2>
+		<p class="history-title table-title">This level's recorded position history</p>
+	
+		<div class="history-table level-table">
+			<table>
+				<thead class="separator">
+					<th>DATE</th>
+					<th>NEW POSITION</th>
+					<th>REASON</th>
+				</thead>
+				<tbody></tbody>
+			</table>
+
+			<div class="level-table-load-more">
+				<button class="button-master load-more-button">
+					<span>Load More</span>
+				</button>
+			</div>
+		</div>
+	</div>
+
 	<div id="levelViewRecords">
 		<h2>Records</h2>
-		<p class="records-title">Record Submission Requirement: <span class="record-requirement"></span> | Verified Victors: <span class="verified-victors"></span> | Verified Records: <span class="verified-records"></span></p>
+		<p class="records-title table-title">Record Submission Requirement: <span class="record-requirement"></span> | Verified Victors: <span class="verified-victors"></span> | Verified Records: <span class="verified-records"></span></p>
 	
-		<table class="records-table">
-			<thead class="separator">
-				<th>USERNAME</th>
-				<th>PERCENTAGE</th>
-				<th>VIDEO PROOF</th>
-			</thead>
-			<tbody>
-				<tr>
-					<td></td>
-					<td>This section is currently under construction!</td>
-					<td></td>
-				</tr>
-			</tbody>
-		</table>
+		<div class="history-table level-table">
+			<table>
+				<thead class="separator">
+					<th>USERNAME</th>
+					<th>PERCENTAGE</th>
+					<th>VIDEO PROOF</th>
+				</thead>
+				<tbody>
+					<tr class="separator">
+						<td></td>
+						<td>This section is currently under construction!</td>
+						<td></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<div class="level-table-load-more">
+				<button class="button-master load-more-button">
+					<span>Load More</span>
+				</button>
+			</div>
+		</div>
 	</div>
+</template>
+
+<template id="levelPositionHistoryItem">
+	<tr class="separator">
+		<td>21st April 2026</td>
+		<td>2</td>
+		<td>No Reason</td>
+	</tr>
 </template>

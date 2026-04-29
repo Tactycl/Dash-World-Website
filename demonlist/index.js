@@ -1,6 +1,8 @@
 const router = new HashRouter("#content");
 const cache = new Cache();
 
+const NORMAL_LIST_LENGTH = 100;
+
 const demonListState = {
 	cursor: null,
 	isLoading: false,
@@ -180,13 +182,10 @@ async function loadView(levelId) {
 	const itemView = document.getElementById("itemViewContainer");
 	const itemViewCurrentView = itemView.getAttribute("data-view");
 
-	var root = loadItemView("levelViewTemplate");
+	const root = loadItemView("levelViewTemplate");
 
-	var response = cache.getLevelData(levelId);
-	if (!response) {
-		response = await cache.loadDemonData(levelId);
-		if (!response) return;
-	};
+	const response = await cache.loadDemonData(levelId);
+	if (!response) return;
 
 	const result = response["result"];
 
@@ -257,7 +256,13 @@ async function loadView(levelId) {
 	});
 
 	const submitRecordButton = root.querySelector("#submitRecordButton");
-	submitRecordButton.href = `#submit/${levelId}`;
+	if (result["level"]["placementRank"] > NORMAL_LIST_LENGTH) {
+		submitRecordButton.style.display = "none";
+
+	} else {
+		submitRecordButton.style.display = "";
+		submitRecordButton.href = `#submit/${levelId}`;
+	}
 	
 	// LEVEL VIEW CONTENT
 
@@ -366,7 +371,8 @@ function loadDemons(response) {
 		const levelThumbnail = node.querySelector(".level-thumbnail");
 		levelThumbnail.src = thumbnailUrl;
 
-		root.style.order = element["placementRank"];
+		const orderOffset = element["placementRank"] > NORMAL_LIST_LENGTH ? 1 : 0;
+		root.style.order = element["placementRank"] + orderOffset;
 		root.setAttribute("data-id", element["levelId"]);
 		root.setAttribute("data-publisher-id", element["publisherId"]);
 		root.setAttribute("data-rank", element["placementRank"]);
@@ -375,6 +381,18 @@ function loadDemons(response) {
 		if ((element["levelId"] == demonListState.selectedLevelId) || (!demonListState.selectedLevelId && element["placementRank"] == 1)) {
 			root.classList.add("selected");
 			loadView(element["levelId"]);
+		}
+
+		if (element["placementRank"] == NORMAL_LIST_LENGTH + 1) {
+			const legacyListTemplate = document.getElementById("levelLegacyListItem");
+			if (legacyListTemplate) {
+				const legacyListNode = legacyListTemplate.content.cloneNode(true);
+				const legacyListRoot = legacyListNode.firstElementChild;
+
+				legacyListRoot.style.order = NORMAL_LIST_LENGTH + 1;
+
+				list.appendChild(legacyListNode);
+			}
 		}
 
 		root.addEventListener("click", () => {
@@ -493,6 +511,12 @@ router.add("submit/:id", {
 	template: "/demonlist/fragments/submit.html"
 })
 
+// Dashboard
+
+router.add("dashboard", {
+	template: "/demonlist/fragments/dashboard.html",
+});
+
 // Other
 router.add("terms", {
 	template: "/demonlist/fragments/terms.html",
@@ -500,8 +524,4 @@ router.add("terms", {
 
 router.add("privacy", {
 	template: "/demonlist/fragments/privacy.html",
-});
-
-router.add("login", {
-	template: "/demonlist/fragments/login.html",
 });

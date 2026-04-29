@@ -173,6 +173,14 @@
 	flex-shrink: 0;
 }
 
+/* LEGACY LIST SEPARATOR */
+
+#levelLegacyListSeparator {
+	display: inline-flex;
+	justify-content: center;
+	padding-bottom: calc(var(--spacing) * 2);
+}
+
 /* ITEM VIEW */
 
 #itemView {

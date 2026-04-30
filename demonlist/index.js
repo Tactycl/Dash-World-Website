@@ -1,40 +1,46 @@
+import { HashRouter } from "./js/router.js";
+import { Cache } from "./js/cache.js";
+import { loadUser, tryLogin } from "./js/auth.js";
+import { splitCamelCase, loadVideoIFrame, getDateStringFromDate, getCommaNumber, formatDuration, getVideoData, getThumbnailLink } from "./js/helpers.js";
+import { createState } from "./js/state.js";
+import { $, $$, el } from "./js/dom.js";
+
 const router = new HashRouter("#content");
 const cache = new Cache();
 
 const NORMAL_LIST_LENGTH = 100;
 
-const demonListState = {
+const demonListState = createState({
 	cursor: null,
 	isLoading: false,
 	hasMore: true,
 	selectedLevelId: null
-};
+});
 
-const historyState = {
+const historyState = createState({
 	cursor: null,
 	isLoading: false,
 	hasMore: true,
 	levelId: null
-};
+});
 
 function switchMainPageView(tabName) {
-	const views = document.querySelectorAll(".list-view");
-
+	const views = $$(document, ".list-view");
 	views.forEach(view => {
 		view.style.display = "none";
 	});
 
-	const active = document.getElementById(`${tabName}List`);
+	const active = $(document, `#${tabName}List`);
 	if (active) active.style.display = "";
 
 	return active;
 }
 
 function updateSelectedMainPageTab(tabName) {
-	const listTabs = document.getElementById("listTabs");
+	const listTabs = $(document, "#listTabs");
 	if (!listTabs) return;
 
-	const buttons = listTabs.querySelectorAll(".list-tab-button");
+	const buttons = $$(listTabs, ".list-tab-button");
 	buttons.forEach((element) => {
 		const dataTab = element.getAttribute("data-tab");
 		element.classList.toggle(
@@ -45,10 +51,10 @@ function updateSelectedMainPageTab(tabName) {
 }
 
 function initMainPageTabButtons() {
-	const listTabs = document.getElementById("listTabs");
+	const listTabs = $(document, "#listTabs");
 	if (!listTabs) return;
 
-	const buttons = listTabs.querySelectorAll(".list-tab-button");
+	const buttons = $$(listTabs, ".list-tab-button");
 	buttons.forEach((element) => {
 		const dataTab = element.getAttribute("data-tab");
 		element.addEventListener("click", () => {
@@ -73,8 +79,8 @@ function onLoadMain(isReloaded, tabName) {
 }
 
 function appendHistoryRows(root, entries) {
-	const tbody = root.querySelector("#levelViewHistory tbody");
-	const template = document.getElementById("levelPositionHistoryItem");
+	const tbody = $(root, "#levelViewHistory tbody");
+	const template = $(document, "#levelPositionHistoryItem");
 
 	if (!tbody || !template) return;
 
@@ -118,39 +124,37 @@ function appendHistoryRows(root, entries) {
 }
 
 async function loadHistoryPage(root) {
-	if (historyState.isLoading || !historyState.hasMore) return;
-
-	historyState.isLoading = true;
+	if (historyState.get().isLoading || !historyState.get().hasMore) return;
+	historyState.set({ isLoading: true });
 
 	try {
 		const res = await cache.loadHistory(
-			historyState.levelId,
+			historyState.get().levelId,
 			100,
-			historyState.cursor
+			historyState.get().cursor
 		);
 
 		if (!res) return;
 
 		appendHistoryRows(root, res.result);
 
-		historyState.cursor = res.nextCursor ?? null;
-		historyState.hasMore = !!res.nextCursor;
+		historyState.set({
+			cursor: res.nextCursor ?? null,
+			hasMore: !!res.nextCursor,
+		});
 
-		const loadMoreDiv = root.querySelector("#levelViewHistory .level-table-load-more");
-		if (loadMoreDiv) {
-			loadMoreDiv.style.display = historyState.hasMore ? "" : "none";
-		}
+		$(root, "#levelViewHistory .level-table-load-more").style.display = historyState.get().hasMore ? "" : "none";
 
 	} catch (e) {
 		console.error(e.message);
 
 	} finally {
-		historyState.isLoading = false;
+		historyState.set({ isLoading: false });
 	}
 }
 
 function toggleItemView(show = false) {
-	const itemView = document.getElementById("itemView");
+	const itemView = $(document, "#itemView");
 	if (itemView) {
 		let display = show == null ? null : (show == true ? "block" : "none");
 		if (!display) {
@@ -161,12 +165,12 @@ function toggleItemView(show = false) {
 }
 
 function loadItemView(itemViewTemplateId) {
-	const itemView = document.getElementById("itemViewContainer");
+	const itemView = $(document, "#itemViewContainer");
 	const itemViewCurrentView = itemView.getAttribute("data-view");
 	itemView.innerHTML = "";
 
 	if (itemViewTemplateId != null) {
-		const template = document.getElementById(itemViewTemplateId);
+		const template = $(document, `#${itemViewTemplateId}`);
 		const node = template.content.cloneNode(true);
 		itemView.append(node);
 		itemView.setAttribute("data-view", itemViewTemplateId);
@@ -179,9 +183,6 @@ function loadItemView(itemViewTemplateId) {
 }
 
 async function loadView(levelId) {
-	const itemView = document.getElementById("itemViewContainer");
-	const itemViewCurrentView = itemView.getAttribute("data-view");
-
 	const root = loadItemView("levelViewTemplate");
 
 	const response = await cache.loadDemonData(levelId);
@@ -191,71 +192,46 @@ async function loadView(levelId) {
 
 	// MOBILE ACTIONS
 
-	const levelViewCloseButton = root.querySelector("#levelViewMobileActions .close-button");
-	levelViewCloseButton.addEventListener("click", () => {
+	$(root, "#levelViewMobileActions .close-button").addEventListener("click", () => {
 		toggleItemView(false);
 	});
 
 	// LEVEL VIEW HEADER
 
-	const levelViewThumbnail = root.querySelector("#levelViewHeader .level-video-container .level-video");
-	loadVideoIFrame(levelViewThumbnail, getVideoData(result["level"]["videoProofUrl"]));
+	loadVideoIFrame($(root, "#levelViewHeader .level-video-container .level-video"), getVideoData(result["level"]["videoProofUrl"]));
 
-	const levelTitle = root.querySelector("#levelViewHeader .level-title");
-	levelTitle.innerText = result["level"]["name"];
+	$(root, "#levelViewHeader .level-title").innerText = result["level"]["name"];
+	$(root, "#levelViewHeader .level-contributors .level-publisher").innerText = result["level"]["publisherUsername"];
 
-	const levelPublisher = root.querySelector("#levelViewHeader .level-contributors .level-publisher");
-	levelPublisher.innerText = result["level"]["publisherUsername"];
-
-	const levelInfoPills = root.querySelector("#levelViewHeader .level-info-pills");
+	const levelInfoPills = $(root, "#levelViewHeader .level-info-pills");
 	levelInfoPills.innerHTML = "";
 
 	const difficultyReadable = String(splitCamelCase(result["level"]["difficulty"]));
-	const difficultyPill = document.createElement("span");
-	difficultyPill.className = `pill ${difficultyReadable.toLowerCase().replace(" ", "-")}`
-	difficultyPill.innerText = difficultyReadable;
-	levelInfoPills.append(difficultyPill);
+	levelInfoPills.append(el("span", `pill ${difficultyReadable.toLowerCase().replace(" ", "-")}`, difficultyReadable));
+	levelInfoPills.append(el("span", `pill ${result["level"]["rating"].toLowerCase()}-rate`, `${result["level"]["rating"]} Rate`));
 
-	const ratingPill = document.createElement("span");
-	ratingPill.className = `pill ${result["level"]["rating"].toLowerCase()}-rate`
-	ratingPill.innerText = `${result["level"]["rating"]} Rate`;
-	levelInfoPills.append(ratingPill);
+	$(root, "#levelViewHeader .level-info-grid .level-creators").innerText = result["level"]["creators"].map(c => c["creatorName"]).join(", ");
+	$(root, "#levelViewHeader .level-info-grid .level-verifier").innerText = result["level"]["verifierUsername"];
+	$(root, "#levelViewHeader .level-info-grid .level-upload-date").innerText = getDateStringFromDate(new Date(result["level"]["createdAt"] * 1000));
+	$(root, "#levelViewHeader .level-info-grid .level-song").innerText = result["level"]["songName"];
 
-	const levelCreatorsString = result["level"]["creators"]
-		.map(c => c["creatorName"])
-		.join(", ");
-
-	const levelCreators = root.querySelector("#levelViewHeader .level-info-grid .level-creators");
-	levelCreators.innerText = levelCreatorsString;
-
-	const levelVerifier = root.querySelector("#levelViewHeader .level-info-grid .level-verifier");
-	levelVerifier.innerText = result["level"]["verifierUsername"];
-
-	const date = new Date(result["level"]["createdAt"] * 1000);
-	const levelUploadDate = root.querySelector("#levelViewHeader .level-info-grid .level-upload-date");
-	levelUploadDate.innerText = getDateStringFromDate(date);
-
-	const levelSong = root.querySelector("#levelViewHeader .level-info-grid .level-song");
-	levelSong.innerText = result["level"]["songName"];
-
-	const copyLevelIdButton = root.querySelector("#copyLevelIdButton");
-	const copyLevelIdButtonSpan = root.querySelector("#copyLevelIdButton span");
-	copyLevelIdButton.addEventListener("click", () => {
+	$(root, "#copyLevelIdButton").addEventListener("click", () => {
+		const copyLevelIdButtonLabel = $(root, "#copyLevelIdButton span");
 		navigator.clipboard.writeText(String(levelId)).then(() => {
-			copyLevelIdButtonSpan.innerText = "Copied!";
+			copyLevelIdButtonLabel.innerText = "Copied!";
 			setTimeout(() => {
-				copyLevelIdButtonSpan.innerText = "Copy Level ID";
+				copyLevelIdButtonLabel.innerText = "Copy Level ID";
 			}, 750);
 
 		}).catch(err => {
-			copyLevelIdButtonSpan.innerText = "Failed to copy!";
+			copyLevelIdButtonLabel.innerText = "Failed to copy!";
 			setTimeout(() => {
-				copyLevelIdButtonSpan.innerText = "Copy Level ID";
+				copyLevelIdButtonLabel.innerText = "Copy Level ID";
 			}, 750);
 		});
 	});
 
-	const submitRecordButton = root.querySelector("#submitRecordButton");
+	const submitRecordButton = $(root, "#submitRecordButton");
 	if (result["level"]["placementRank"] > NORMAL_LIST_LENGTH) {
 		submitRecordButton.style.display = "none";
 
@@ -266,74 +242,44 @@ async function loadView(levelId) {
 	
 	// LEVEL VIEW CONTENT
 
-	const levelDownloads = root.querySelector("#levelViewContent .level-info-grid .level-downloads");
-	levelDownloads.innerText = getCommaNumber(result["level"]["downloads"]);
-
-	const levelLikes = root.querySelector("#levelViewContent .level-info-grid .level-likes");
-	levelLikes.innerText = getCommaNumber(result["level"]["likes"]);
-
-	const levelObjects = root.querySelector("#levelViewContent .level-info-grid .level-objects");
-	levelObjects.innerText = getCommaNumber(result["level"]["objectCount"]);
-
-	const levelCopy = root.querySelector("#levelViewContent .level-info-grid .level-copy");
-	levelCopy.innerText = (result["level"]["isCopyable"] == 0 ? "Not Copyable" : (result["level"]["isCopyPasswordProtected"] == 1 ? "Copyable via Password" : "Freely Copyable"));
-
-	const levelLength = root.querySelector("#levelViewContent .level-info-grid .level-length");
-	levelLength.innerText = formatDuration(result["level"]["length"]);
-
-	const levelVersion = root.querySelector("#levelViewContent .level-info-grid .level-version");
-	levelVersion.innerText = getCommaNumber(result["level"]["version"]);
-
-	const levelCopiedFrom = root.querySelector("#levelViewContent .level-info-grid .level-copied-from");
-	levelCopiedFrom.innerText = result["level"]["copiedId"] == null ? "None" : result["level"]["copiedId"];
-
-	const ldmsString = result["ldms"]
-		.map(c => `${c["levelName"]} (${c["ldmLevelId"]})`)
-		.join(", ");
-
-	const levelLdms = root.querySelector("#levelViewContent .level-info-grid .level-ldms");
-	levelLdms.innerText = result["ldms"].length == 0 ? "None" : ldmsString;
+	$(root, "#levelViewContent .level-info-grid .level-downloads").innerText = getCommaNumber(result["level"]["downloads"]);
+	$(root, "#levelViewContent .level-info-grid .level-likes").innerText = getCommaNumber(result["level"]["likes"]);
+	$(root, "#levelViewContent .level-info-grid .level-objects").innerText = getCommaNumber(result["level"]["objectCount"]);
+	$(root, "#levelViewContent .level-info-grid .level-copy").innerText = (result["level"]["isCopyable"] == 0 ? "Not Copyable" : (result["level"]["isCopyPasswordProtected"] == 1 ? "Copyable via Password" : "Freely Copyable"));
+	$(root, "#levelViewContent .level-info-grid .level-length").innerText = formatDuration(result["level"]["length"]);
+	$(root, "#levelViewContent .level-info-grid .level-version").innerText = getCommaNumber(result["level"]["version"]);
+	$(root, "#levelViewContent .level-info-grid .level-copied-from").innerText = result["level"]["copiedId"] == null ? "None" : result["level"]["copiedId"];
+	$(root, "#levelViewContent .level-info-grid .level-ldms").innerText = result["ldms"].length == 0 ? "None" : result["ldms"].map(c => `${c["levelName"]} (${c["ldmLevelId"]})`).join(", ");
 
 	// LEVEL VIEW RECORDS
 
-	const recordRequirement = root.querySelector("#levelViewRecords .records-title .record-requirement");
-	recordRequirement.innerText = `${result["level"]["percentage10thPoints"] ?? "100"}%`;
+	$(root, "#levelViewRecords .records-title .record-requirement").innerText = `${result["level"]["percentage10thPoints"] ?? "100"}%`;
+	$(root, "#levelViewRecords .records-title .verified-victors").innerText = "0";
+	$(root, "#levelViewRecords .records-title .verified-records").innerText = "0";
 
-	const verifiedVictors = root.querySelector("#levelViewRecords .records-title .verified-victors");
-	verifiedVictors.innerText = "0";
+	historyState.set({
+		cursor: null,
+		hasMore: true,
+		levelId: levelId,
+	});
 
-	const verifiedRecords = root.querySelector("#levelViewRecords .records-title .verified-records");
-	verifiedRecords.innerText = "0";
-
-	historyState.cursor = null;
-	historyState.hasMore = true;
-	historyState.levelId = levelId;
-
-	const historyRoot = root.querySelector("#levelViewHistory tbody");
-	if (historyRoot) historyRoot.innerHTML = "";
+	$(root, "#levelViewHistory tbody").innerHTML = "";
 
 	// HISTORY
 
 	await loadHistoryPage(root);
-
-	const loadMoreBtn = root.querySelector("#levelViewHistory .load-more-button");
-	if (loadMoreBtn) {
-		loadMoreBtn.addEventListener("click", () => {
-			loadHistoryPage(root);
-		});
-	}
+	$(root, "#levelViewHistory .load-more-button").addEventListener("click", () => {
+		loadHistoryPage(root);
+	});
 }
 
 function updateSelectedMainPageDemon() {
-	const list = document.getElementById("demonsList");
-	if (!list) return;
-
-	const elements = list.querySelectorAll(".list-entry");
+	const elements = $$(document, "#demonsList .list-entry");
 	elements.forEach((element) => {
 		const rank = Number(element.getAttribute("data-rank"));
 		const levelId = Number(element.getAttribute("data-id"));
-		if ((levelId == demonListState.selectedLevelId) || (!demonListState.selectedLevelId && rank == 1)) {
-			demonListState.selectedLevelId = levelId;
+		if ((levelId == demonListState.get().selectedLevelId) || (!demonListState.get().selectedLevelId && rank == 1)) {
+			demonListState.set({ selectedLevelId: levelId });
 			element.classList.add("selected");
 			loadView(levelId);
 
@@ -344,8 +290,8 @@ function updateSelectedMainPageDemon() {
 }
 
 function loadDemons(response) {
-	const levelEntryTemplate = document.getElementById("levelEntryTemplate");
-	const list = document.getElementById("demonsList");
+	const levelEntryTemplate = $(document, "#levelEntryTemplate");
+	const list = $(document, "#demonsList");
 	if (!levelEntryTemplate || !list) return;
 
 	const result = response["result"];
@@ -356,19 +302,19 @@ function loadDemons(response) {
 		const videoData = getVideoData(element["videoProofUrl"]);
 		const thumbnailUrl = await getThumbnailLink(videoData);
 
-		const levelRank = node.querySelector(".level-rank");
+		const levelRank = $(node, ".level-rank");
 		levelRank.innerText = element["placementRank"];
 
-		const levelName = node.querySelector(".level-name");
+		const levelName = $(node, ".level-name");
 		levelName.innerText = element["levelName"];
 
-		const levelDifficulty = node.querySelector(".level-difficulty");
+		const levelDifficulty = $(node, ".level-difficulty");
 		levelDifficulty.innerText = splitCamelCase(element["levelDifficulty"]);
 
-		const levelPublisher = node.querySelector(".level-publisher");
+		const levelPublisher = $(node, ".level-publisher");
 		levelPublisher.innerText = element["publisherUsername"];
 
-		const levelThumbnail = node.querySelector(".level-thumbnail");
+		const levelThumbnail = $(node, ".level-thumbnail");
 		levelThumbnail.src = thumbnailUrl;
 
 		const orderOffset = element["placementRank"] > NORMAL_LIST_LENGTH ? 1 : 0;
@@ -378,13 +324,13 @@ function loadDemons(response) {
 		root.setAttribute("data-rank", element["placementRank"]);
 		root.setAttribute("data-created", element["createdAt"]);
 
-		if ((element["levelId"] == demonListState.selectedLevelId) || (!demonListState.selectedLevelId && element["placementRank"] == 1)) {
+		if ((element["levelId"] == demonListState.get().selectedLevelId) || (!demonListState.get().selectedLevelId && element["placementRank"] == 1)) {
 			root.classList.add("selected");
 			loadView(element["levelId"]);
 		}
 
 		if (element["placementRank"] == NORMAL_LIST_LENGTH + 1) {
-			const legacyListTemplate = document.getElementById("levelLegacyListItem");
+			const legacyListTemplate = $(document, "#levelLegacyListItem");
 			if (legacyListTemplate) {
 				const legacyListNode = legacyListTemplate.content.cloneNode(true);
 				const legacyListRoot = legacyListNode.firstElementChild;
@@ -405,12 +351,11 @@ function loadDemons(response) {
 }
 
 async function loadDemonsList() {
-	if (demonListState.isLoading) return;
-	if (!demonListState.hasMore) return;
-	demonListState.isLoading = true;
+	if (demonListState.get().isLoading || !demonListState.get().hasMore) return;
+	demonListState.set({ isLoading: true });
 
 	try {
-		const cursor = demonListState.cursor;
+		const cursor = demonListState.get().cursor;
 
 		const response = await fetch(`https://api.tarylem.com/v1/demonlist/demons?limit=25${cursor ? `&cursor=${cursor}` : ""}`);
 		if (!response.ok) {
@@ -420,19 +365,21 @@ async function loadDemonsList() {
 		const result = await response.json();
 		loadDemons(result)
 
-		demonListState.cursor = result.nextCursor ?? null;
-		demonListState.hasMore = !!result.nextCursor;
+		demonListState.set({
+			cursor: result.nextCursor ?? null,
+			hasMore: !!result.nextCursor,
+		});
 
 	} catch(error) {
 		console.error(error.message);
 		
 	} finally {
-		demonListState.isLoading = false;
+		demonListState.set({ isLoading: false });
 	}
 }
 
 function initInfiniteScroll() {
-	const list = document.getElementById("demonsList");
+	const list = $(document, "#demonsList");
 	if (!list) return;
 
 	list.addEventListener("scroll", () => {
@@ -445,11 +392,13 @@ function initInfiniteScroll() {
 
 async function onLoadDemons(isReloaded, { id }) {
 	const isTabFirstTime = onLoadMain(isReloaded, "demons");
-	demonListState.selectedLevelId = id ? Number(id) : null;
+	demonListState.set({ selectedLevelId: id ? Number(id) : null });
 
 	if (isTabFirstTime) {
-		demonListState.cursor = null;
-		demonListState.hasMore = true;
+		demonListState.set({
+			cursor: null,
+			hasMore: true,
+		});
 
 		await loadDemonsList();
 		initInfiniteScroll();
@@ -463,7 +412,7 @@ function onLoadLeaderboard(isReloaded, { id }) {
 	const isTabFirstTime = onLoadMain(isReloaded, "leaderboard");
 
 	//const playerId = id ? Number(id) : null;
-	const list = document.getElementById("leaderboardList");
+	const list = $(document, "#leaderboardList");
 	if (list && isTabFirstTime) {
 		const title = document.createElement("h2");
 		title.innerText = "This page is currently under construction!";
@@ -472,6 +421,36 @@ function onLoadLeaderboard(isReloaded, { id }) {
 	}
 
 	loadItemView(null);
+}
+
+async function init() {
+	const myAccountButton = $(document, "#myAccountButton");
+	const myAccountButtonLabel = $(document, "#myAccountButton span span");
+
+	let isAuthenticated = false;
+	if (!document.cookie.includes("DEMONLIST_LOGGED_IN=1")) {
+		myAccountButtonLabel.innerText = "Login";
+		myAccountButton.addEventListener("click", tryLogin);
+		return;
+	}
+
+	try {
+		const user = await loadUser();
+		isAuthenticated = !!user;
+
+	} catch(e) {
+		console.error(e);
+	}
+
+	myAccountButtonLabel.innerText = isAuthenticated ? "My Account" : "Login";
+	myAccountButton.addEventListener("click", async () => {
+		if (!isAuthenticated) {
+			tryLogin();
+			return;
+		}
+
+		window.location.href = "#dashboard";
+	});
 }
 
 // Demons
@@ -525,3 +504,5 @@ router.add("terms", {
 router.add("privacy", {
 	template: "/demonlist/fragments/privacy.html",
 });
+
+init();

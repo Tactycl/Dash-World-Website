@@ -1,4 +1,4 @@
-class Cache {
+export class Cache {
 	constructor(ttlMs = 1000 * 60 * 60) {
 		this.ttlMs = ttlMs;
 

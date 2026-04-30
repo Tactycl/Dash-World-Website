@@ -113,6 +113,7 @@
 	background: linear-gradient(var(--color-bg-04)) var(--border-dw-accent);
 	align-items: center;
 	cursor: pointer;
+	user-select: none;
 	transition: 0.1s ease;
 }
 

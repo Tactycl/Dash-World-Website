@@ -1,4 +1,4 @@
-class HashRouter {
+export class HashRouter {
 	constructor(rootSelector) {
 		this.routes = [];
 		this.root = document.querySelector(rootSelector);
@@ -27,25 +27,41 @@ class HashRouter {
 		});
 	}
 
-	getHashPath() {
-		return location.hash.slice(1) || "/";
+	getHashParts() {
+		const hash = location.hash.slice(1) || "/";
+
+		const [path, queryString] = hash.split("?");
+		const query = {};
+
+		if (queryString) {
+			const params = new URLSearchParams(queryString);
+			for (const [key, value] of params.entries()) {
+				query[key] = value;
+			}
+		}
+
+		return { path, query };
 	}
 
 	async resolve() {
-		const path = this.getHashPath();
+		const { path, query } = this.getHashParts();
+
 		for (const route of this.routes) {
 			const match = path.match(route.regex);
 			if (match) {
 				const params = {};
+
 				route.paramNames.forEach((name, i) => {
 					params[name] = match[i + 1];
 				});
 
-				if (this.currentTemplate == route.template) {
-					route.onLoad(false, params);
+				// Merge route params + query params
+				const allParams = { ...params, ...query };
 
+				if (this.currentTemplate === route.template) {
+					route.onLoad(false, allParams);
 				} else {
-					await this.loadTemplate(route.template, params, route.onLoad);
+					await this.loadTemplate(route.template, allParams, route.onLoad);
 				}
 				return;
 			}

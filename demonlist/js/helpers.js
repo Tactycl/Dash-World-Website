@@ -1,4 +1,4 @@
-async function fetch_url(url, payload = {}, headers = { "Content-Type": "application/json" }, method = "POST") {
+export async function fetch_url(url, payload = {}, headers = { "Content-Type": "application/json" }, method = "POST") {
 	try {
 		const response = await fetch(url, {
 			method: method,
@@ -19,11 +19,11 @@ async function fetch_url(url, payload = {}, headers = { "Content-Type": "applica
 	}
 }
 
-function splitCamelCase(str) {
+export function splitCamelCase(str) {
 	return str.replace(/(?!^)([A-Z])/g, ' $1');
 }
 
-function getVideoData(url) {
+export function getVideoData(url) {
 	const ytRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
 	const vimeoRegex = /vimeo\.com\/(\d+)/;
 	const bilibiliRegex = /bilibili\.com\/video\/([a-zA-Z0-9]+)/;
@@ -37,7 +37,7 @@ function getVideoData(url) {
 	return null;
 }
 
-function getVideoUrl(video, timestamp = 0) {
+export function getVideoUrl(video, timestamp = 0) {
 	if (!video) return null;
 
 	switch (video.type) {
@@ -52,7 +52,7 @@ function getVideoUrl(video, timestamp = 0) {
 	}
 }
 
-function getEmbedLink(video, timestamp = 0) {
+export function getEmbedLink(video, timestamp = 0) {
 	if (!video) return null;
 
 	switch (video.type) {
@@ -67,7 +67,7 @@ function getEmbedLink(video, timestamp = 0) {
 	}
 }
 
-async function getThumbnailLink(video) {
+export async function getThumbnailLink(video) {
 	if (!video) return null;
 
 	switch (video.type) {
@@ -104,7 +104,7 @@ async function getThumbnailLink(video) {
 	}
 }
 
-function loadVideoIFrame(iframe, video, timestamp = 0) {
+export function loadVideoIFrame(iframe, video, timestamp = 0) {
 	const embed = getEmbedLink(video, timestamp);
 	if (embed && iframe) {
 		iframe.src = embed;
@@ -114,7 +114,7 @@ function loadVideoIFrame(iframe, video, timestamp = 0) {
 	}
 }
 
-function getDateStringFromDate(date) {
+export function getDateStringFromDate(date) {
 	const months = [
 		"January", "February", "March", "April", "May", "June",
 		"July", "August", "September", "October", "November", "December"
@@ -127,11 +127,11 @@ function getDateStringFromDate(date) {
 	return `${day}${daySuffix} ${months[date.getMonth()]} ${date.getFullYear()}`;
 }
 
-function getCommaNumber(number) {
+export function getCommaNumber(number) {
 	return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-function formatDuration(seconds) {
+export function formatDuration(seconds) {
 	const minutes = Math.floor(seconds / 60);
 	const remainingSeconds = seconds % 60;
 

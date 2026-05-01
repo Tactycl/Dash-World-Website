@@ -1,0 +1,132 @@
+/* GENERAL */
+
+#dashboardContainer {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	min-height: 100%;
+	padding: calc(var(--spacing) * 4);
+}
+
+#scaledDashboardContainer {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width: clamp(0rem, 100%, 48rem);
+	min-height: 100%;
+}
+
+#dashboardHeader {
+	margin-top: calc(var(--spacing) * 8);
+	margin-bottom: calc(var(--spacing) * 4);
+}
+
+/* USER SECTION */
+
+#userSection {
+	border: 1px solid transparent;
+	border-radius: var(--radius-2xl);
+	box-shadow: var(--box-shadow-faint-glow-dw-accent);
+	background: linear-gradient(var(--color-bg-02)) var(--border-dw-accent);
+	padding: calc(var(--spacing) * 6);
+	width: 100%;
+}
+
+#userContainer {
+	display: inline-flex;
+	gap: calc(var(--spacing) * 8);
+}
+
+#avatarIconContainer {
+	border-radius: 100%;
+	overflow: hidden;
+	border: 1px transparent solid;
+	background: linear-gradient(var(--color-bg-02)) var(--border-dw-accent);
+	width: calc(var(--spacing) * 36);
+	height: calc(var(--spacing) * 36);
+	aspect-ratio: 1;
+}
+
+#avatarIcon {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	aspect-ratio: 1;
+}
+
+#userDataContainer {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding-top: var(--spacing);
+	padding-bottom: var(--spacing);
+	flex-grow: 1;
+}
+
+#userDataContainer .info-grid {
+	width: 100%;
+	--columns: 3;
+}
+
+.dashboard-container {
+	width: 100%;
+}
+
+.dashboard-container.separator {
+	padding-bottom: calc(var(--spacing) * 4);
+	margin-bottom: calc(var(--spacing) * 4);
+}
+
+.dashboard-container a,
+.dashboard-container button {
+	display: block;
+	transition: 0.3s ease;
+	border-radius: var(--radius-lg);
+	padding: calc(var(--spacing) * 4);
+	width: 100%;
+	background: transparent;
+	cursor: pointer;
+	text-align: left;
+}
+
+.dashboard-container a:hover,
+.dashboard-container button:hover {
+	background-color: color-mix(in oklab, transparent 90%, var(--text-color-01) 10%);
+}
+
+.dashboard-container .dashboard-section-title {
+	color: var(--text-color-01);
+}
+
+.dashboard-section-description {
+	color: var(--text-color-02);
+	font-weight: var(--font-thin);
+	font-size: var(--text-sm);
+}
+
+@media(max-width: 800px) {
+	#userContainer {
+		align-items: center;
+	}
+
+	#userContainer {
+		display: flex;
+		flex-direction: column;
+	}
+
+	#userDataContainer {
+		width: 100%;
+		padding-top: 0;
+		padding-bottom: 0;
+		align-items: center;
+	}
+
+	#usernameLabel {
+		margin-bottom: calc(var(--spacing) * 4);
+	}
+
+	#userDataContainer .info-grid {
+		--columns: 1;
+	}
+}

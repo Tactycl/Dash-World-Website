@@ -278,38 +278,8 @@
 .level-info-pills .pill.feature-rate { background: rgb(255, 166, 0); }
 .level-info-pills .pill.star-rate { background: rgb(159, 64, 0); }
 
-#levelViewHeader .level-stats-container .level-info-grid {
+#levelViewHeader .level-stats-container .info-grid {
 	margin-top: calc(var(--spacing) * 4);
-}
-
-.level-info-grid {
-	display: grid;
-	grid-template-columns: repeat(var(--columns), 1fr);
-	gap: calc(var(--spacing) * 4);
-	--columns: 2;
-}
-
-.level-info-grid .level-info-space {
-	display: flex;
-	flex-direction: column;
-	overflow-x: auto;
-	border-radius: var(--radius-xl);
-	border: 1px transparent solid;
-	background: linear-gradient(var(--color-bg-03)) var(--border-dw-accent);
-	padding: calc(var(--spacing) * 4);
-}
-
-.level-info-grid .level-info-space .level-info-space-title {
-	color: var(--text-color-02);
-	font-weight: var(--font-thin);
-	font-size: var(--text-sm);
-	padding-bottom: var(--spacing);
-	margin-bottom: calc(var(--spacing) * 1.5);
-}
-
-.level-info-grid .level-info-space .level-info-space-value {
-	white-space: nowrap;
-	overflow-x: auto;
 }
 
 .level-info-buttons {
@@ -352,7 +322,7 @@
 	margin-bottom: calc(var(--spacing) * 8);
 }
 
-#levelViewContent .level-info-grid {
+#levelViewContent .info-grid {
 	--columns: 4;
 }
 
@@ -495,7 +465,7 @@
 		justify-content: center;
 	}
 
-	#levelViewContent .level-info-grid {
+	#levelViewContent .info-grid {
 		--columns: 2;
 	}
 }

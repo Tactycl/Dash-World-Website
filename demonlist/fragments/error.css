@@ -1,0 +1,18 @@
+#errorRouterNotification {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid transparent;
+	border-radius: var(--radius-2xl);
+	box-shadow: var(--box-shadow-faint-glow-dw-accent);
+	background: linear-gradient(var(--color-bg-02)) var(--border-dw-accent);
+	padding: calc(var(--spacing) * 6);
+	gap: calc(var(--spacing) * 6);
+	width: clamp(0rem, 95%, 32rem);
+}
+
+#errorRouterNotification .error-button-list {
+	display: inline-flex;
+	gap: calc(var(--spacing) * 4);
+}

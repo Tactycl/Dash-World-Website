@@ -210,10 +210,10 @@ async function loadView(levelId) {
 	levelInfoPills.append(el("span", `pill ${difficultyReadable.toLowerCase().replace(" ", "-")}`, difficultyReadable));
 	levelInfoPills.append(el("span", `pill ${result["level"]["rating"].toLowerCase()}-rate`, `${result["level"]["rating"]} Rate`));
 
-	$(root, "#levelViewHeader .level-info-grid .level-creators").innerText = result["level"]["creators"].map(c => c["creatorName"]).join(", ");
-	$(root, "#levelViewHeader .level-info-grid .level-verifier").innerText = result["level"]["verifierUsername"];
-	$(root, "#levelViewHeader .level-info-grid .level-upload-date").innerText = getDateStringFromDate(new Date(result["level"]["createdAt"] * 1000));
-	$(root, "#levelViewHeader .level-info-grid .level-song").innerText = result["level"]["songName"];
+	$(root, "#levelViewHeader .info-grid .level-creators").innerText = result["level"]["creators"].map(c => c["creatorName"]).join(", ");
+	$(root, "#levelViewHeader .info-grid .level-verifier").innerText = result["level"]["verifierUsername"];
+	$(root, "#levelViewHeader .info-grid .level-upload-date").innerText = getDateStringFromDate(new Date(result["level"]["createdAt"] * 1000));
+	$(root, "#levelViewHeader .info-grid .level-song").innerText = result["level"]["songName"];
 
 	$(root, "#copyLevelIdButton").addEventListener("click", () => {
 		const copyLevelIdButtonLabel = $(root, "#copyLevelIdButton span");
@@ -237,19 +237,19 @@ async function loadView(levelId) {
 
 	} else {
 		submitRecordButton.style.display = "";
-		submitRecordButton.href = `#submit/${levelId}`;
+		submitRecordButton.href = `#submit/record/${levelId}`;
 	}
 	
 	// LEVEL VIEW CONTENT
 
-	$(root, "#levelViewContent .level-info-grid .level-downloads").innerText = getCommaNumber(result["level"]["downloads"]);
-	$(root, "#levelViewContent .level-info-grid .level-likes").innerText = getCommaNumber(result["level"]["likes"]);
-	$(root, "#levelViewContent .level-info-grid .level-objects").innerText = getCommaNumber(result["level"]["objectCount"]);
-	$(root, "#levelViewContent .level-info-grid .level-copy").innerText = (result["level"]["isCopyable"] == 0 ? "Not Copyable" : (result["level"]["isCopyPasswordProtected"] == 1 ? "Copyable via Password" : "Freely Copyable"));
-	$(root, "#levelViewContent .level-info-grid .level-length").innerText = formatDuration(result["level"]["length"]);
-	$(root, "#levelViewContent .level-info-grid .level-version").innerText = getCommaNumber(result["level"]["version"]);
-	$(root, "#levelViewContent .level-info-grid .level-copied-from").innerText = result["level"]["copiedId"] == null ? "None" : result["level"]["copiedId"];
-	$(root, "#levelViewContent .level-info-grid .level-ldms").innerText = result["ldms"].length == 0 ? "None" : result["ldms"].map(c => `${c["levelName"]} (${c["ldmLevelId"]})`).join(", ");
+	$(root, "#levelViewContent .info-grid .level-downloads").innerText = getCommaNumber(result["level"]["downloads"]);
+	$(root, "#levelViewContent .info-grid .level-likes").innerText = getCommaNumber(result["level"]["likes"]);
+	$(root, "#levelViewContent .info-grid .level-objects").innerText = getCommaNumber(result["level"]["objectCount"]);
+	$(root, "#levelViewContent .info-grid .level-copy").innerText = (result["level"]["isCopyable"] == 0 ? "Not Copyable" : (result["level"]["isCopyPasswordProtected"] == 1 ? "Copyable via Password" : "Freely Copyable"));
+	$(root, "#levelViewContent .info-grid .level-length").innerText = formatDuration(result["level"]["length"]);
+	$(root, "#levelViewContent .info-grid .level-version").innerText = getCommaNumber(result["level"]["version"]);
+	$(root, "#levelViewContent .info-grid .level-copied-from").innerText = result["level"]["copiedId"] == null ? "None" : result["level"]["copiedId"];
+	$(root, "#levelViewContent .info-grid .level-ldms").innerText = result["ldms"].length == 0 ? "None" : result["ldms"].map(c => `${c["levelName"]} (${c["ldmLevelId"]})`).join(", ");
 
 	// LEVEL VIEW RECORDS
 
@@ -423,6 +423,66 @@ function onLoadLeaderboard(isReloaded, { id }) {
 	loadItemView(null);
 }
 
+async function onLoadDashboard(isReloaded, {}) {
+	if (!document.cookie.includes("DEMONLIST_LOGGED_IN=1")) {
+		window.location.href = "";
+	}
+
+	try {
+		const user = await loadUser();
+		if (!user) {
+			window.location.href = "";
+		}
+		
+		$(document, "#avatarIcon").src = user["avatarUrl"];
+		$(document, "#usernameLabel").innerText = user["username"];
+		$(document, "#demonsRank").innerText = user["demonsRank"];
+		$(document, "#demonsScore").innerText = user["demonsScore"];
+		$(document, "#hardestDemon").innerText = user["hardestDemonName"] ?? "None";
+
+		$(document, "#logoutButton").addEventListener("click", async () => {
+			fetch("https://api.tarylem.com/v1/demonlist/auth/logout", {
+				method: "POST",
+				credentials: "include",
+
+			}).catch(err => {
+				console.error("Logout request failed:", err);
+
+			}).finally(() => {
+				window.location.reload();
+			});
+		});
+
+	} catch (e) {
+		console.error(e);
+	}
+}
+
+function onLoadError(isReloaded, { id }) {
+	id = id ? Number(id) : null;
+	if (!id) {
+		window.location.href = "";
+		return;
+	}
+
+	let errorTitle = "";
+	switch (id) {
+		case -1:
+			errorTitle = "Login failed, you need a Dash World account first";
+			break;
+
+		case 1:
+			errorTitle = "Login failed, there was an error with the roblox oauth";
+			break;
+
+		default:
+			errorTitle = "Unknown error";
+	}
+
+	$(document, "#errorCode").innerText = id;
+	$(document, "#errorDescription").innerText = errorTitle;
+}
+
 async function init() {
 	const myAccountButton = $(document, "#myAccountButton");
 	const myAccountButtonLabel = $(document, "#myAccountButton span span");
@@ -482,18 +542,29 @@ router.add("leaderboard/:id", {
 
 // Submit
 
-router.add("submit", {
-	template: "/demonlist/fragments/submit.html"
+router.add("submit/record", {
+	template: "/demonlist/fragments/underConstruction.html"
 });
 
-router.add("submit/:id", {
-	template: "/demonlist/fragments/submit.html"
-})
+router.add("submit/record/:id", {
+	template: "/demonlist/fragments/underConstruction.html"
+});
+
+router.add("submit/level", {
+	template: "/demonlist/fragments/underConstruction.html"
+});
+
+// Records
+
+router.add("records", {
+	template: "/demonlist/fragments/underConstruction.html"
+});
 
 // Dashboard
 
 router.add("dashboard", {
 	template: "/demonlist/fragments/dashboard.html",
+	onLoad: onLoadDashboard
 });
 
 // Other
@@ -504,5 +575,10 @@ router.add("terms", {
 router.add("privacy", {
 	template: "/demonlist/fragments/privacy.html",
 });
+
+router.add("error/:id", {
+	template: "/demonlist/fragments/error.html",
+	onLoad: onLoadError
+})
 
 init();

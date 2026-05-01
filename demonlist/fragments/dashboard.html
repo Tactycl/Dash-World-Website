@@ -1,1 +1,66 @@
-<h2 id="errorRouterNotification">This page is currently under construction!</h2>
+<link rel="stylesheet" href="./fragments/dashboard.css">
+
+<div id="dashboardContainer">
+	<div id="scaledDashboardContainer">
+		<header id="dashboardHeader">
+			<h1>User Dashboard</h1>
+		</header>
+
+		<section id="userSection">
+			<div class="dashboard-container separator" id="userContainer">
+				<div id="avatarIconContainer">
+					<img id="avatarIcon">
+				</div>
+				
+				<div id="userDataContainer">
+					<h2 id="usernameLabel"></h2>
+				
+					<div class="info-grid">
+						<div class="info-space">
+							<p class="info-space-title separator">DEMONS RANK</p>
+							<p class="info-space-value" id="demonsRank"></p>
+						</div>
+
+						<div class="info-space">
+							<p class="info-space-title separator">DEMONS SCORE</p>
+							<p class="info-space-value" id="demonsScore"></p>
+						</div>
+
+						<div class="info-space">
+							<p class="info-space-title separator">HARDEST DEMON</p>
+							<p class="info-space-value" id="hardestDemon"></p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="dashboard-container separator" id="submitRecordContainer">
+				<a href="#submit/record">
+					<h2 class="dashboard-section-title">Submit a Record</h2>
+					<p class="dashboard-section-description">Submit proof of your completion or progress on a level in the list and earn points</p>
+				</a>
+			</div>
+
+			<div class="dashboard-container separator" id="submitLevelContainer">
+				<a href="#submit/level">
+					<h2 class="dashboard-section-title">Submit a Level</h2>
+					<p class="dashboard-section-description">Suggest a new level to be added to the list</p>
+				</a>
+			</div>
+
+			<div class="dashboard-container separator" id="recordsContainer">
+				<a href="#records">
+					<h2 class="dashboard-section-title">Records</h2>
+					<p class="dashboard-section-description">Look at your current submitted records and their status</p>
+				</a>
+			</div>
+
+			<div class="dashboard-container" id="logoutContainer">
+				<button id="logoutButton">
+					<h2 class="dashboard-section-title">Logout</h2>
+					<p class="dashboard-section-description">Logout from the demonlist</p>
+				</button>
+			</div>
+		</section>
+	</div>
+</div>

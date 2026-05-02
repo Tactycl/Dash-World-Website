@@ -100,6 +100,16 @@ function appendHistoryRows(root, entries) {
 				correspondingClass = "position-history-added";
 				break;
 
+			case "movedAbove":
+				reason = "Moved";
+				correspondingClass = "position-history-ascended";
+				break;
+
+			case "movedBelow":
+				reason = "Moved";
+				correspondingClass = "position-history-descended";
+				break;
+
 			case "otherAddedAbove":
 				reason = `${entry["reasonLevelName"]} was added above`;
 				correspondingClass = "position-history-descended";

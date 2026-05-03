@@ -471,7 +471,7 @@ async function onLoadDashboard(isReloaded, {}) {
 			console.error("Logout request failed:", err);
 
 		}).finally(() => {
-			window.location.reload();
+			window.location.href = "";
 		});
 	});
 }

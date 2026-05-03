@@ -65,29 +65,17 @@ body {
 	overflow: hidden;
 }
 
-h1 {
-	font-size: var(--text-2xl);
-}
+h1 { font-size: var(--text-2xl); }
+h2 { font-size: var(--text-xl); }
+h3 { font-size: var(--text-lg); }
+h4 { font-size: var(--text-nm); }
+h5 { font-size: var(--text-sm); }
+h6 { font-size: var(--text-xs); }
 
-h2 {
-	font-size: var(--text-xl);
-}
-
-h3 {
-	font-size: var(--text-lg);
-}
-
-h4 {
-	font-size: var(--text-nm);
-}
-
-h5 {
-	font-size: var(--text-sm);
-}
-
-h6 {
-	font-size: var(--text-xs);
-}
+.font-thin { font-weight: var(--font-thin); }
+.font-nm { font-weight: var(--font-nm); }
+.font-semi { font-weight: var(--font-semi); }
+.font-bold { font-weight: var(--font-bold); }
 
 #app {
 	display: flex;
@@ -308,21 +296,25 @@ span:has(img) img {
 	transition: box-shadow 0.3s ease;
 }
 
+.button-master.disabled {
+	cursor: default;
+}
+
 .button-master span {
 	color: var(--text-color-01);
 	font-size: var(--text-nm);
 }
 
-.button-master:hover {
+.button-master:not(.disabled):hover {
 	background: var(--gradient-dw-accent);
 	box-shadow: var(--box-shadow-glow-dw-accent);
 }
 
-.button-master:hover span {
+.button-master:not(.disabled):hover span {
 	color: white;
 }
 
-.button-master:hover span img {
+.button-master:not(.disabled):hover span img {
 	filter: brightness(100%);
 }
 
@@ -337,6 +329,10 @@ span:has(img) img {
 	transition: background 0.3s ease;
 }
 
+.button-secondary.disabled {
+	cursor: default;
+}
+
 .button-secondary span {
 	background: var(--text-color-01);
 	-webkit-background-clip: text;
@@ -345,11 +341,11 @@ span:has(img) img {
 	font-size: var(--text-nm);
 }
 
-.button-secondary:hover {
+.button-secondary:not(.disabled):hover {
 	background: color-mix(in oklab, transparent 90%, var(--text-color-01) 10%);
 }
 
-.button-secondary:hover span {
+.button-secondary:not(.disabled):hover span {
 	background: var(--gradient-dw-accent);
 	-webkit-background-clip: text;
 	background-clip: text;

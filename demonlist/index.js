@@ -1,6 +1,7 @@
 import { HashRouter } from "./js/router.js";
 import { Cache } from "./js/cache.js";
-import { requireAuth, loadUser, tryLogin } from "./js/auth.js";
+import { isRuleRead, readRule, requireAuth, loadUser, tryLogin } from "./js/auth.js";
+import { submitForm, validateFormInput } from "./js/forms.js";
 import { splitCamelCase, loadVideoIFrame, getDateStringFromDate, getCommaNumber, formatDuration, getVideoData, getThumbnailLink } from "./js/helpers.js";
 import { createState } from "./js/state.js";
 import { $, $$, el } from "./js/dom.js";
@@ -563,10 +564,12 @@ function initLevelInputScroll() {
 	});
 }
 
-function onLoadSubmitForm(isReload) {
+async function onLoadSubmitForm(isReload, ruleType) {
 	if (!isReload) {
 		return;
 	}
+
+	const formType = ruleType == "submitRecordRules" ? "record" : "level";
 
 	const optionInputs = $$(document, ".form-options-input");
 	optionInputs.forEach((element) => {
@@ -583,14 +586,54 @@ function onLoadSubmitForm(isReload) {
 			if (isActive && optionContent.children.length === 0) {
 				if (element.id == "levelInput") {
 					loadLevelInputList();
+					validateFormInput(formType);
 				}
 			}
 		});
 	});
+
+	const ruleView = $(document, "#ruleView");
+	const ruleVersion = ruleView.getAttribute("data-version");
+
+	const isRead = await isRuleRead(ruleType);
+	ruleView.setAttribute("data-read", isRead);
+
+	let debounce = false
+	$(document, "#ruleAcceptButton").addEventListener("click", async () => {
+		if (debounce) {
+			return;
+		}
+		debounce = true;
+
+		try {
+			const isRead = await readRule(ruleType, ruleVersion);
+			if (isRead) {
+				ruleView.setAttribute("data-read", true);
+			}
+
+		} catch (e) {
+			console.error("Failed to read rules:", e);
+
+		} finally {
+			debounce = false;
+		}
+	});
+
+	validateFormInput(formType);
+	$(document, "#formSubmitButton").addEventListener("click", async () => {
+		submitForm(formType);
+	});
+
+	const fieldInputs = $$(document, ".form-field-input");
+	fieldInputs.forEach((element) => {
+		element.addEventListener("input", () => {
+			validateFormInput(formType);
+		})
+	});
 }
 
 async function onLoadSubmitRecord(isReloaded, { id }) {
-	onLoadSubmitForm(isReloaded);
+	onLoadSubmitForm(isReloaded, "submitRecordRules");
 
 	const user = await requireAuth();
 	if (!user) {
@@ -624,7 +667,7 @@ async function onLoadSubmitRecord(isReloaded, { id }) {
 }
 
 async function onLoadSubmitLevel(isReloaded, {}) {
-	onLoadSubmitForm(isReloaded);
+	onLoadSubmitForm(isReloaded, "submitLevelRules");
 
 	const user = await requireAuth();
 	if (!user) {

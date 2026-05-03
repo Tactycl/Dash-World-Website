@@ -159,15 +159,28 @@
 	display: flex;
 }
 
+.form-section .form-error,
+.form-section .form-success {
+	margin-top: calc(var(--spacing) * 4);
+	font-size: var(--text-sm);
+	font-weight: var(--font-semi);
+}
+
+.form-section .form-error { color: rgb(255, 66, 66); }
+.form-section .form-success { color: rgb(20, 202, 0); }
+
 /* FORM SUBMIT */
 
 .form-submit {
-	display: inline-flex;
+	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	position: relative;
 	margin-top: calc(var(--spacing) * 8);
 	margin-bottom: calc(var(--spacing) * 8);
+	padding-top: calc(var(--spacing) * 12);
+	padding-bottom: calc(var(--spacing) * 12);
 }
 
 .form-submit #requiredNote {
@@ -208,6 +221,56 @@
 
 .form-level-entry h1 {
 	color: white;
+}
+
+/* RULES */
+
+#formView {
+	display: none;
+}
+
+#ruleView[data-read="true"] {
+	display: none;
+}
+
+#ruleView[data-read="true"] + #formView {
+	display: unset;
+}
+
+#ruleView .rules-list {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--spacing) * 4);
+	margin-bottom: calc(var(--spacing) * 4);
+	color: var(--text-color-02);
+}
+
+#ruleView .rule-title {
+	color: var(--text-color-01);
+	margin-bottom: var(--spacing);
+	font-weight: var(--font-semi);
+}
+
+#ruleView .rule-list {
+	padding-left: calc(var(--spacing) * 8);
+}
+
+#ruleView .rule-list li {
+	list-style: disc;
+	margin-top: calc(var(--spacing) * 2);
+	margin-bottom: calc(var(--spacing) * 2);
+}
+
+#ruleView .accept-button-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+/* FORM SUBMIT BUTTON */
+
+#formSubmitButton.disabled {
+	filter: brightness(50%);
 }
 
 @media (max-width: 500px) {

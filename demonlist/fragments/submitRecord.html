@@ -7,46 +7,91 @@
 			<p>Submitting as: <a id="usernameLabel" href="#dashboard"></a></p>
 		</header>
 		
-		<div class="form-list">
-			<section class="form-section" data-required="true">
-				<h2 class="form-title">Level<span>*</span></h2>
-				<p class="form-description separator">The level which you are submitting for</p>
-				<button id="levelInput" class="form-options-input form-input" data-choice="">
-					<span>Nothing selected at the moment</span>
-				</button>
-				<ul id="levelInputContent" class="form-options-content"></ul>
-			</section>
-			
-			<section class="form-section" data-required="true">
-				<h2 class="form-title">Progress<span>*</span></h2>
-				<p class="form-description separator">How much progress you have on the level (e.g. '58', '100')</p>
-				<input type="number" id="progressInput" class="form-field-input form-input" placeholder="Insert your percentage here" min="0" max="100">
-			</section>
-			
-			<section class="form-section" data-required="true">
-				<h2 class="form-title">Video Proof<span>*</span></h2>
-				<p class="form-description separator">The link to your video proof completion</p>
-				<input type="text" id="videoProofInput" class="form-field-input form-input" placeholder="Insert the link to your video here" maxlength="64">
-				<div class="separator"></div>
-				<p class="form-sub-title">Supported Platforms:</p>
-				<div class="platform-list">
-					<a href="https://www.youtube.com" class="platform-entry youtube"><img src="/img/youtube.svg"> Youtube</a>
-				</div>
-			</section>
-			
+		<div id="ruleView" data-version="v2_2026-05-03">
 			<section class="form-section">
-				<h2 class="form-title">Note</h2>
-				<p class="form-description separator">Any remaining information you would like to let the moderator looking at your submission know</p>
-				<textarea type="text" id="noteInput" class="form-field-input form-input" placeholder="Insert your note here" maxlength="400"></textarea>
+				<h2 class="form-title">Rules</h2>
+				<p class="form-description separator">These are the rules to submit this form</p>
+				<div class="rules-list separator">
+					<div class="rule separator">
+						<p class="rule-title">Rules to settings:</p>
+						<ul class="rule-list">
+							<li>You must not use <span class="font-semi">Disable Shake</span> on levels that require Shake to add difficulty.</li>
+							<li>You must not use <span class="font-semi">Disable Gravity Effect</span> at all, <span class="font-thin">you are exempt from this rule if you are playing on 1.512 or earlier.</span></li>
+							<li>You must use <span class="font-semi">Show Info Menu</span> in your entire run. <span class="font-thin">If you are playing before 1.6 you are exempt from this rule.</span></li>
+							<li>You are allowed to use fps beyond <span class="font-semi">240hz</span> with an external <span class="font-semi">FPS
+									Unlocker</span>, <span class="font-thin">as it does not affect the in-game physics.</span></li>
+						</ul>
+					</div>
+					<div class="rule separator">
+						<p class="rule-title">Rules to recording:</p>
+						<ul class="rule-list">
+							<li>A <span class="font-semi">full</span> recording of the level completion from 0 to 100% is required, the <span class="font-semi">end screen</span> needs to be visible as well.</li>
+							<li>Your video must contain <span class="font-semi">audible click sounds</span>, <span class="font-thin">if not present your record will be rejected</span>.</li>
+							<li>Your video must be unedited from <span class="font-semi">the start of the attempt until the end screen</span>, <span class="font-thin">
+								if you edit any of these sections of the video your record will be rejected</span>.</li>
+							<li>Your video must stay viewable that means, it needs to, for example on Youtube, stay <span class="font-semi">Unlisted or Public</span>. <span class="font-thin">
+								If your video ever goes private, we may remove your record from the list</span>.</li>
+						</ul>
+					</div>
+					<div class="rule">
+						<p class="rule-title">Rules to levels:</p>
+						<ul class="rule-list">
+							<li>You must play the <span class="font-semi">unedited and official version</span> of the level, <span
+									class="font-thin">though you are also allowed to play with <span class="font-semi">LDM</span> enabled. You are also
+									permitted to play one of the <span class="font-semi">official LDMs</span> provided by us and found on the level page in the list.</li>
+						</ul>
+					</div>
+				</div>
+				<div class="accept-button-container">
+					<button class="button-master" id="ruleAcceptButton">
+						<span>Accept</span>
+					</button>
+				</div>
 			</section>
 		</div>
 
-		<section class="form-section form-submit">
-			<p id="requiredNote"><span>*</span> this is a required field.</p>
-			<button class="button-master" id="formSubmitButton">
-				<span>Submit</span>
-			</button>
-		</section>
+		<div id="formView">
+			<div class="form-list">
+				<section class="form-section" data-required="true" data-param="levelId">
+					<h2 class="form-title">Level<span>*</span></h2>
+					<p class="form-description separator">The level which you are submitting for</p>
+					<button id="levelInput" class="form-options-input form-input" data-choice="">
+						<span>Nothing selected at the moment</span>
+					</button>
+					<ul id="levelInputContent" class="form-options-content"></ul>
+				</section>
+			
+				<section class="form-section" data-required="true" data-param="progress">
+					<h2 class="form-title">Progress<span>*</span></h2>
+					<p class="form-description separator">How much progress you have on the level (e.g. '58', '100')</p>
+					<input type="number" id="progressInput" class="form-field-input form-input" placeholder="Insert your percentage here" min="0" max="100">
+				</section>
+			
+				<section class="form-section" data-required="true" data-param="videoUrl">
+					<h2 class="form-title">Video Proof<span>*</span></h2>
+					<p class="form-description separator">The link to your video proof completion</p>
+					<input type="text" id="videoProofInput" class="form-field-input form-input" placeholder="Insert the link to your video here" maxlength="64">
+					<div class="separator"></div>
+					<p class="form-sub-title">Supported Platforms:</p>
+					<div class="platform-list">
+						<a href="https://www.youtube.com" class="platform-entry youtube"><img src="/img/youtube.svg"> Youtube</a>
+					</div>
+				</section>
+			
+				<section class="form-section" data-param="note">
+					<h2 class="form-title">Note</h2>
+					<p class="form-description separator">Any remaining information you would like to let the moderator looking at your submission know</p>
+					<textarea type="text" id="noteInput" class="form-field-input form-input" placeholder="Insert your note here" maxlength="400"></textarea>
+				</section>
+			</div>
+			
+			<section class="form-section form-submit">
+				<p id="requiredNote"><span>*</span> this is a required field.</p>
+				<button class="button-master" id="formSubmitButton">
+					<span>Submit</span>
+				</button>
+			</section>
+		</div>
 	</div>
 </div>
 

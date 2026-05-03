@@ -643,12 +643,16 @@ function onLoadError(isReloaded, { id }) {
 
 	let errorTitle = "";
 	switch (id) {
-		case -1:
+		case 100:
 			errorTitle = "Login failed, you need a Dash World account first";
 			break;
 
-		case 1:
+		case 110:
 			errorTitle = "Login failed, there was an error with the roblox oauth";
+			break;
+
+		case 200:
+			errorTitle = "You need to login first to do this action";
 			break;
 
 		default:

@@ -7,14 +7,14 @@ export function tryLogin() {
 
 export async function requireAuth() {
 	if (!document.cookie.includes("DEMONLIST_LOGGED_IN=1")) {
-		window.location.href = "";
+		window.location.href = "#error/200";
 		return null;
 	}
 
 	try {
 		const user = await loadUser();
 		if (!user) {
-			window.location.href = "";
+			window.location.href = "#error/200";
 			return null;
 		}
 

@@ -1,0 +1,224 @@
+/* GENERAL */
+
+#form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	min-height: 100%;
+	padding: calc(var(--spacing) * 4);
+}
+
+#scaledForm {
+	width: clamp(0rem, 100%, 48rem);
+	min-height: 100%;
+}
+
+/* FORM HEADER */
+
+#formHeader {
+	display: inline-flex;
+	align-items: end;
+	justify-content: space-between;
+	margin-top: calc(var(--spacing) * 8);
+	margin-bottom: calc(var(--spacing) * 4);
+	width: 100%;
+}
+
+#formHeader p,
+#formHeader a {
+	color: var(--text-color-02);
+	font-size: var(--text-nm);
+	font-weight: var(--font-thin);
+}
+
+#formHeader a:hover {
+	text-decoration: underline;
+}
+
+/* FORM LIST */
+
+.form-list {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--spacing) * 8);
+}
+
+/* FORM SECTIONS */
+
+.form-section {
+	border: 1px solid transparent;
+	border-radius: var(--radius-2xl);
+	box-shadow: var(--box-shadow-faint-glow-dw-accent);
+	background: linear-gradient(var(--color-bg-02)) var(--border-dw-accent);
+	padding: calc(var(--spacing) * 6);
+	width: 100%;
+}
+
+.form-section[data-required="true"] .form-title span {
+	color: var(--color-dw-accent-01);
+	font-weight: var(--font-thin);
+}
+
+.form-section .form-description {
+	color: var(--text-color-02);
+	font-size: var(--text-sm);
+	font-weight: var(--font-thin);
+}
+
+.form-section .form-sub-title {
+	font-size: var(--text-sm);
+	margin-bottom: calc(var(--spacing) * 2);
+}
+
+.form-section .separator {
+	padding-bottom: calc(var(--spacing) * 4);
+	margin-bottom: calc(var(--spacing) * 4);
+}
+
+/* FORM INPUTS */
+
+.form-section .form-input,
+.form-section .form-input span {
+	width: 100%;
+	display: block;
+	white-space: nowrap;
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+
+.form-section .form-field-input,
+.form-section .form-options-input {
+	color: var(--text-color-01);
+	height: calc(var(--text-nm) + var(--spacing) * 12);
+	font-size: var(--text-nm);
+	border-radius: var(--radius-xl);
+	caret-color: var(--color-dw-accent-01);
+	background-color: var(--color-bg-03);
+	padding: calc(var(--spacing) * 6);
+	outline: 0;
+	text-align: left;
+}
+
+.form-section textarea.form-field-input {
+	min-height: calc(var(--text-nm) + var(--spacing) * 12);
+	max-height: 16rem;
+	resize: vertical;
+}
+
+.form-section .form-options-input {
+	position: relative;
+	cursor: pointer;
+	transition: background 0.3s ease;
+	padding-right: calc(var(--text-nm) + var(--spacing) * 6);
+}
+
+.form-section .form-options-input[data-choice=""] span {
+	color: var(--text-color-02);
+}
+
+.form-section .form-options-input:hover {
+	background-color: color-mix(in oklab, var(--color-bg-03) 90%, var(--text-color-01) 10%);
+}
+
+.form-section .form-options-input.selected {
+	border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+.form-section .form-options-input::after {
+	content: "";
+	position: absolute;
+	display: block;
+	filter: var(--icon-filter);
+	background-image: url("/img/arrow.svg");
+	width: var(--text-nm);
+	height: var(--text-nm);
+	right: 0;
+	top: 50%;
+	transform: translate(-100%, -50%) rotateX(180deg);
+	transition: 0.3s ease;
+}
+
+.form-section .form-options-input.selected::after {
+	transform: translate(-100%, -50%);
+}
+
+.form-section .form-options-content {
+	display: none;
+	flex-direction: column;
+	overflow-y: scroll;
+	gap: calc(var(--spacing) * 4);
+	width: 100%;
+	max-height: 20rem;
+	border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+	padding: calc(var(--spacing) * 6);
+	background: var(--color-bg-03);
+}
+
+.form-section .form-options-content.active {
+	display: flex;
+}
+
+/* FORM SUBMIT */
+
+.form-submit {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	margin-top: calc(var(--spacing) * 8);
+	margin-bottom: calc(var(--spacing) * 8);
+}
+
+.form-submit #requiredNote {
+	position: absolute;
+	bottom: calc(var(--spacing) * 4);
+	left: calc(var(--spacing) * 4);
+	font-size: var(--text-sm);
+	font-weight: var(--font-thin);
+}
+
+.form-submit #requiredNote span {
+	color: var(--color-dw-accent-01);
+}
+
+/* LEVEL FORM ENTRY */
+
+.form-level-entry {
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	cursor: pointer;
+	background-blend-mode: multiply;
+	user-select: none;
+	border-radius: var(--radius-lg);
+	background-color: rgba(0, 0, 0, 0.6);
+	width: 100%;
+	padding: calc(var(--spacing) * 4);
+	transition: 0.1s ease;
+}
+
+.form-level-entry:hover {
+	background-color: rgba(0, 0, 0, 0.8);
+}
+
+.form-level-entry:active {
+	scale: 0.975;
+}
+
+.form-level-entry h1 {
+	color: white;
+}
+
+@media (max-width: 500px) {
+	#formHeader {
+		display: flex;
+		flex-direction: column;
+		justify-content: left;
+		align-items: start;
+	}
+
+	.form-submit {
+		padding-bottom: calc(var(--spacing) * 8 + var(--text-sm));
+	}
+}

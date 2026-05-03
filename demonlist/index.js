@@ -1,6 +1,6 @@
 import { HashRouter } from "./js/router.js";
 import { Cache } from "./js/cache.js";
-import { loadUser, tryLogin } from "./js/auth.js";
+import { requireAuth, loadUser, tryLogin } from "./js/auth.js";
 import { splitCamelCase, loadVideoIFrame, getDateStringFromDate, getCommaNumber, formatDuration, getVideoData, getThumbnailLink } from "./js/helpers.js";
 import { createState } from "./js/state.js";
 import { $, $$, el } from "./js/dom.js";
@@ -9,12 +9,20 @@ const router = new HashRouter("#content");
 const cache = new Cache();
 
 const NORMAL_LIST_LENGTH = 100;
+const INFINITE_SCROLL_THRESHOLD = 200;
+const INFINITE_SCROLL_COOLDOWN = 200;
 
 const demonListState = createState({
 	cursor: null,
 	isLoading: false,
 	hasMore: true,
 	selectedLevelId: null
+});
+
+const levelInputState = createState({
+	cursor: null,
+	isLoading: false,
+	hasMore: true
 });
 
 const historyState = createState({
@@ -392,10 +400,19 @@ function initInfiniteScroll() {
 	const list = $(document, "#demonsList");
 	if (!list) return;
 
-	list.addEventListener("scroll", () => {
-		const isAtBottom = list.scrollTop + list.clientHeight >= list.scrollHeight;
+	let debounce = false;
+	let lastTrigger = 0;
+	list.addEventListener("scroll", async () => {
+		if (debounce || Date.now() - lastTrigger < INFINITE_SCROLL_COOLDOWN) {
+			return;
+		}
+
+		const isAtBottom = list.scrollHeight - (list.scrollTop + list.clientHeight) <= INFINITE_SCROLL_THRESHOLD;
 		if (isAtBottom) {
-			loadDemonsList();
+			debounce = true;
+			await loadDemonsList();
+			debounce = false;
+			lastTrigger = Date.now();
 		}
 	})
 }
@@ -434,38 +451,187 @@ function onLoadLeaderboard(isReloaded, { id }) {
 }
 
 async function onLoadDashboard(isReloaded, {}) {
-	if (!document.cookie.includes("DEMONLIST_LOGGED_IN=1")) {
-		window.location.href = "";
+	const user = await requireAuth();
+	if (!user) {
+		return;
 	}
 
+	$(document, "#avatarIcon").src = user["avatarUrl"];
+	$(document, "#usernameLabel").innerText = user["username"];
+	$(document, "#demonsRank").innerText = user["demonsRank"];
+	$(document, "#demonsScore").innerText = user["demonsScore"];
+	$(document, "#hardestDemon").innerText = user["hardestDemonName"] ?? "None";
+
+	$(document, "#logoutButton").addEventListener("click", async () => {
+		fetch("https://api.tarylem.com/v1/demonlist/auth/logout", {
+			method: "POST",
+			credentials: "include",
+
+		}).catch(err => {
+			console.error("Logout request failed:", err);
+
+		}).finally(() => {
+			window.location.reload();
+		});
+	});
+}
+
+function appendLevelInputEntries(entries) {
+	const list = $(document, "#levelInputContent");
+	const template = $(document, "#formLevelEntryTemplate");
+	if (!list || !template) {
+		return;
+	}
+
+	entries.forEach(async (entry) => {
+		const node = template.content.cloneNode(true);
+		const root = node.firstElementChild;
+
+		const video = getVideoData(entry["videoProofUrl"]);
+		const thumbnailUrl = await getThumbnailLink(video);
+		root.style.backgroundImage = `url("${thumbnailUrl}")`;
+		root.style.order = entry["placementRank"];
+
+		$(node, ".level-rank").innerText = entry["placementRank"];
+		$(node, ".level-name").innerText = entry["levelName"];
+
+		node.firstElementChild.addEventListener("click", () => {
+			const input = $(document, "#levelInput");
+			const label = $(input, "span");
+
+			input.setAttribute("data-choice", entry["levelId"]);
+			label.innerText = `#${entry["placementRank"]} - ${entry["levelName"]}`;
+
+			input.classList.remove("selected");
+			list.classList.remove("active");
+		});
+
+		list.appendChild(node);
+	});
+}
+
+async function loadLevelInputList() {
+	if (levelInputState.get().isLoading || !levelInputState.get().hasMore) return;
+	levelInputState.set({ isLoading: true });
+
 	try {
-		const user = await loadUser();
-		if (!user) {
-			window.location.href = "";
+		const cursor = levelInputState.get().cursor;
+
+		const response = await fetch(
+			`https://api.tarylem.com/v1/demonlist/demons?limit=25${cursor ? `&cursor=${cursor}` : ""}`
+		);
+
+		if (!response.ok) {
+			throw new Error(`Response status: ${response.status}`);
 		}
-		
-		$(document, "#avatarIcon").src = user["avatarUrl"];
-		$(document, "#usernameLabel").innerText = user["username"];
-		$(document, "#demonsRank").innerText = user["demonsRank"];
-		$(document, "#demonsScore").innerText = user["demonsScore"];
-		$(document, "#hardestDemon").innerText = user["hardestDemonName"] ?? "None";
 
-		$(document, "#logoutButton").addEventListener("click", async () => {
-			fetch("https://api.tarylem.com/v1/demonlist/auth/logout", {
-				method: "POST",
-				credentials: "include",
+		const result = await response.json();
 
-			}).catch(err => {
-				console.error("Logout request failed:", err);
+		appendLevelInputEntries(result.result);
 
-			}).finally(() => {
-				window.location.reload();
-			});
+		levelInputState.set({
+			cursor: result.nextCursor ?? null,
+			hasMore: !!result.nextCursor
 		});
 
 	} catch (e) {
-		console.error(e);
+		console.error(e.message);
+
+	} finally {
+		levelInputState.set({ isLoading: false });
 	}
+}
+
+function initLevelInputScroll() {
+	const list = $(document, "#levelInputContent");
+	if (!list) return;
+
+	let debounce = false;
+	let lastTrigger = 0;
+	list.addEventListener("scroll", async () => {
+		if (debounce || Date.now() - lastTrigger < INFINITE_SCROLL_COOLDOWN) {
+			return;
+		}
+
+		const isAtBottom = list.scrollHeight - (list.scrollTop + list.clientHeight) <= INFINITE_SCROLL_THRESHOLD;
+		if (isAtBottom) {
+			debounce = true;
+			await loadLevelInputList();
+			debounce = false;
+			lastTrigger = Date.now();
+		}
+	});
+}
+
+function onLoadSubmitForm(isReload) {
+	if (!isReload) {
+		return;
+	}
+
+	const optionInputs = $$(document, ".form-options-input");
+	optionInputs.forEach((element) => {
+		const optionContent = $(document, `#${element.id}Content`);
+		if (!optionContent) {
+			return;
+		}
+
+		element.addEventListener("click", () => {
+			const isActive = !element.classList.contains("selected");
+			element.classList.toggle("selected", isActive);
+			optionContent.classList.toggle("active", isActive);
+
+			if (isActive && optionContent.children.length === 0) {
+				if (element.id == "levelInput") {
+					loadLevelInputList();
+				}
+			}
+		});
+	});
+}
+
+async function onLoadSubmitRecord(isReloaded, { id }) {
+	onLoadSubmitForm(isReloaded);
+
+	const user = await requireAuth();
+	if (!user) {
+		return;
+	}
+
+	$(document, "#usernameLabel").innerText = user["username"];
+	if (isReloaded) {
+		initLevelInputScroll();
+	}
+
+	if (id) {
+		try {
+			const response = await cache.loadDemonData(Number(id));
+			if (!response) {
+				return;
+			}
+
+			const level = response["result"]["level"];
+
+			const input = $(document, "#levelInput");
+			const label = $(input, "span");
+
+			input.setAttribute("data-choice", level["levelId"]);
+			label.innerText = `#${level["placementRank"]} - ${level["name"]}`;
+
+		} catch (e) {
+			console.error("Failed to preload level input:", e);
+		}
+	}
+}
+
+async function onLoadSubmitLevel(isReloaded, {}) {
+	onLoadSubmitForm(isReloaded);
+
+	const user = await requireAuth();
+	if (!user) {
+		return;
+	}
+	
+	$(document, "#usernameLabel").innerText = user["username"];
 }
 
 function onLoadError(isReloaded, { id }) {
@@ -553,15 +719,18 @@ router.add("leaderboard/:id", {
 // Submit
 
 router.add("submit/record", {
-	template: "/demonlist/fragments/underConstruction.html"
+	template: "/demonlist/fragments/submitRecord.html",
+	onLoad: onLoadSubmitRecord
 });
 
 router.add("submit/record/:id", {
-	template: "/demonlist/fragments/underConstruction.html"
+	template: "/demonlist/fragments/submitRecord.html",
+	onLoad: onLoadSubmitRecord
 });
 
 router.add("submit/level", {
-	template: "/demonlist/fragments/underConstruction.html"
+	template: "/demonlist/fragments/submitLevel.html",
+	onLoad: onLoadSubmitLevel
 });
 
 // Records

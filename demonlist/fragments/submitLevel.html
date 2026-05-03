@@ -1,0 +1,48 @@
+<link rel="stylesheet" href="./fragments/form.css">
+
+<div id="form">
+	<div id="scaledForm">
+		<header id="formHeader">
+			<h1>Submit a Level</h1>
+			<p>Submitting as: <a id="usernameLabel" href="#dashboard"></a></p>
+		</header>
+		
+		<div class="form-list">
+			<section class="form-section" data-required="true">
+				<h2 class="form-title">Level<span>*</span></h2>
+				<p class="form-description separator">The level which you are submitting</p>
+				<input type="number" id="levelInput" class="form-field-input form-input" placeholder="Insert the level ID here" min="1">
+			</section>
+			
+			<section class="form-section" data-required="true">
+				<h2 class="form-title">Video Proof<span>*</span></h2>
+				<p class="form-description separator">The link to your video proof completion</p>
+				<input type="text" id="videoProofInput" class="form-field-input form-input" placeholder="Insert the link to your video here" maxlength="64">
+				<div class="separator"></div>
+				<p class="form-sub-title">Supported Platforms:</p>
+				<div class="platform-list">
+					<a href="https://www.youtube.com" class="platform-entry youtube"><img src="/img/youtube.svg"> Youtube</a>
+				</div>
+			</section>
+			
+			<section class="form-section">
+				<h2 class="form-title">Note</h2>
+				<p class="form-description separator">Any remaining information you would like to let the moderator looking at your submission know</p>
+				<textarea type="text" id="noteInput" class="form-field-input form-input" placeholder="Insert your note here" maxlength="400"></textarea>
+			</section>
+		</div>
+
+		<section class="form-section form-submit">
+			<p id="requiredNote"><span>*</span> this is a required field.</p>
+			<button class="button-master" id="formSubmitButton">
+				<span>Submit</span>
+			</button>
+		</section>
+	</div>
+</div>
+
+<template id="formLevelEntryTemplate">
+	<li class="form-level-entry">
+		<h1>#<span class="level-rank"></span> - <span class="level-name"></span></h1>
+	</li>
+</template>

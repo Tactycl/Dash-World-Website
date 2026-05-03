@@ -5,6 +5,28 @@ export function tryLogin() {
 	window.location.href = "https://api.tarylem.com/v1/demonlist/auth/login";
 }
 
+export async function requireAuth() {
+	if (!document.cookie.includes("DEMONLIST_LOGGED_IN=1")) {
+		window.location.href = "";
+		return null;
+	}
+
+	try {
+		const user = await loadUser();
+		if (!user) {
+			window.location.href = "";
+			return null;
+		}
+
+		return user;
+
+	} catch (e) {
+		console.error(e);
+	}
+
+	return null;
+}
+
 export async function loadUser() {
 	if (userPromise) return userPromise;
 

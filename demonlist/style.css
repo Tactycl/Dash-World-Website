@@ -196,6 +196,36 @@ span:has(img) img {
 	overflow-x: auto;
 }
 
+.platform-list {
+	display: inline-flex;
+	gap: calc(var(--spacing) * 2);
+}
+
+.platform-list .platform-entry {
+	color: white;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	gap: calc(var(--spacing) * 2);
+	font-size: var(--text-sm);
+	border-radius: var(--radius-nm);
+	padding: var(--spacing);
+	padding-inline: calc(var(--spacing) * 2);
+	background: var(--gradient-dw-accent);
+	cursor: pointer;
+	transition: 0.3s ease;
+}
+
+.platform-list .platform-entry img {
+	width: var(--text-sm);
+	height: var(--text-sm);
+}
+
+.platform-list .platform-entry:hover {
+	box-shadow: var(--box-shadow-faint-glow-dw-accent);
+}
+
 #errorRouterNotification {
 	text-align: center;
 }

@@ -280,8 +280,4 @@
 		justify-content: left;
 		align-items: start;
 	}
-
-	.form-submit {
-		padding-bottom: calc(var(--spacing) * 8 + var(--text-sm));
-	}
 }

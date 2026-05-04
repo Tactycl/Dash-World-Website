@@ -376,7 +376,7 @@ async function loadDemonsList() {
 	try {
 		const cursor = demonListState.get().cursor;
 
-		const response = await fetch(`https://api.tarylem.com/v1/demonlist/demons?limit=25${cursor ? `&cursor=${cursor}` : ""}`);
+		const response = await fetch(`https://api.tarylem.com/v1/demonlist/demons?limit=100${cursor ? `&cursor=${cursor}` : ""}&includeLegacy=true`);
 		if (!response.ok) {
 			throw new Error(`Response status: ${response.status}`);
 		}
@@ -519,7 +519,7 @@ async function loadLevelInputList() {
 		const cursor = levelInputState.get().cursor;
 
 		const response = await fetch(
-			`https://api.tarylem.com/v1/demonlist/demons?limit=25${cursor ? `&cursor=${cursor}` : ""}`
+			`https://api.tarylem.com/v1/demonlist/demons?limit=100${cursor ? `&cursor=${cursor}` : ""}&includeLegacy=false`
 		);
 
 		if (!response.ok) {

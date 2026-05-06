@@ -1,6 +1,6 @@
 /* GENERAL */
 
-#form {
+#formContainer {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -9,7 +9,7 @@
 	padding: calc(var(--spacing) * 4);
 }
 
-#scaledForm {
+#scaledFormContainer {
 	width: clamp(0rem, 100%, 48rem);
 	min-height: 100%;
 }
@@ -270,7 +270,7 @@
 /* FORM SUBMIT BUTTON */
 
 #formSubmitButton.disabled {
-	filter: brightness(50%);
+	opacity: 0.5;
 }
 
 @media (max-width: 500px) {

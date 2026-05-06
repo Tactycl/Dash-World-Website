@@ -677,6 +677,15 @@ async function onLoadSubmitLevel(isReloaded, {}) {
 	$(document, "#usernameLabel").innerText = user["username"];
 }
 
+async function onLoadRecords(isReloaded, {}) {
+	const user = await requireAuth();
+	if (!user) {
+		return;
+	}
+
+	
+}
+
 function onLoadError(isReloaded, { id }) {
 	id = id ? Number(id) : null;
 	if (!id) {
@@ -783,7 +792,8 @@ router.add("submit/level", {
 // Records
 
 router.add("records", {
-	template: "/demonlist/fragments/underConstruction.html"
+	template: "/demonlist/fragments/records.html",
+	onLoad: onLoadRecords
 });
 
 // Dashboard

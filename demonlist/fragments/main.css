@@ -345,6 +345,7 @@
 	border: 1px transparent solid;
 	background: linear-gradient(var(--color-bg-03)) var(--border-dw-accent);
 	overflow: hidden;
+	overflow-x: auto;
 	--columns: 3;
 }
 
@@ -365,6 +366,12 @@
 	font-size: var(--text-nm);
 	text-align: center;
 }
+
+.level-table thead th.first,
+.level-table tbody td.first { text-align: left; }
+
+.level-table thead th.last,
+.level-table tbody td.last { text-align: right; }
 
 .level-table thead th {
 	color: var(--text-color-02);
@@ -399,9 +406,34 @@
 	margin-bottom: calc(var(--spacing) * 8);
 }
 
-#levelViewHistory .position-history-added { background: color-mix(in oklab, transparent, var(--color-dw-accent-01) var(--background-transparency)); }
+#levelViewHistory .position-history-added,
+#levelViewRecords .record-entry { background: color-mix(in oklab, transparent, var(--color-dw-accent-01) var(--background-transparency)); }
 #levelViewHistory .position-history-descended { background: color-mix(in oklab, transparent, rgb(255, 66, 66) var(--background-transparency)); }
-#levelViewHistory .position-history-ascended { background: color-mix(in oklab, transparent, rgb(81, 255, 81) var(--background-transparency)); }
+#levelViewHistory .position-history-ascended,
+#levelViewRecords .record-entry.completed { background: color-mix(in oklab, transparent, rgb(81, 255, 81) var(--background-transparency)); }
+
+/* levelViewRecords */
+
+#levelViewRecords .record-entry .record-user {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#levelViewRecords .record-entry .record-avatar {
+	width: calc(var(--spacing) * 14);
+	height: calc(var(--spacing) * 14);
+	margin-right: calc(var(--spacing) * 2);
+	border: 1px solid transparent;
+	background: linear-gradient(var(--color-bg-01)) var(--border-dw-accent);
+	border-radius: 100%;
+}
+
+#levelViewRecords .record-entry .record-proof-button.button-secondary {
+	display: block;
+	width: max-content;
+	margin-left: auto;
+}
 
 @media (max-width: 1200px) {
 	#items {

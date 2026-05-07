@@ -147,9 +147,9 @@
 		<div class="history-table level-table">
 			<table>
 				<thead class="separator">
-					<th>DATE</th>
+					<th class="first">DATE</th>
 					<th>NEW POSITION</th>
-					<th>REASON</th>
+					<th class="last">REASON</th>
 				</thead>
 				<tbody></tbody>
 			</table>
@@ -166,20 +166,14 @@
 		<h2>Records</h2>
 		<p class="records-title table-title">Record Submission Requirement: <span class="record-requirement"></span> | Verified Victors: <span class="verified-victors"></span> | Verified Records: <span class="verified-records"></span></p>
 	
-		<div class="history-table level-table">
+		<div class="records-table level-table">
 			<table>
 				<thead class="separator">
-					<th>USERNAME</th>
+					<th class="first">USERNAME</th>
 					<th>PERCENTAGE</th>
-					<th>VIDEO PROOF</th>
+					<th class="last">VIDEO PROOF</th>
 				</thead>
-				<tbody>
-					<tr class="separator">
-						<td></td>
-						<td>This section is currently under construction!</td>
-						<td></td>
-					</tr>
-				</tbody>
+				<tbody></tbody>
 			</table>
 
 			<div class="level-table-load-more">
@@ -193,8 +187,29 @@
 
 <template id="levelPositionHistoryItem">
 	<tr class="separator">
-		<td>21st April 2026</td>
-		<td>2</td>
-		<td>No Reason</td>
+		<td class="history-date first"></td>
+		<td class="history-placement"></td>
+		<td class="history-reason last"></td>
+	</tr>
+</template>
+
+<template id="levelRecordItem">
+	<tr class="record-entry separator">
+		<td class="first">
+			<div class="record-user">
+				<img class="record-avatar">
+				<p class="record-username">Tactycl</p>
+			</div>
+		</td>
+		<td>
+			<span class="record-percentage">100%</span>
+		</td>
+		<td class="last">
+			<a class="record-proof-button button-secondary" target="_blank">
+				<span>
+					<img class="record-proof-origin" src="/img/youtube.svg"> <span>View Proof</span>
+				</span>
+			</a>
+		</td>
 	</tr>
 </template>

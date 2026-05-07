@@ -33,6 +33,13 @@ const historyState = createState({
 	levelId: null
 });
 
+const recordsState = createState({
+	cursor: null,
+	isLoading: false,
+	hasMore: true,
+	levelId: null
+});
+
 function switchMainPageView(tabName) {
 	const views = $$(document, ".list-view");
 	views.forEach(view => {
@@ -87,6 +94,19 @@ function onLoadMain(isReloaded, tabName) {
 	return false;
 }
 
+function appendEmptyTableRow(tbody, columnCount, text = "Nothing found.") {
+	const row = document.createElement("tr");
+	row.className = "separator";
+
+	const cell = document.createElement("td");
+	cell.colSpan = columnCount;
+	cell.innerText = text;
+	cell.className = "empty-table-entry";
+
+	row.appendChild(cell);
+	tbody.appendChild(row);
+}
+
 function appendHistoryRows(root, entries) {
 	const tbody = $(root, "#levelViewHistory tbody");
 	const template = $(document, "#levelPositionHistoryItem");
@@ -95,11 +115,12 @@ function appendHistoryRows(root, entries) {
 
 	entries.forEach(entry => {
 		const node = template.content.cloneNode(true);
+		const root = node.firstElementChild
 
 		const date = new Date(entry["validFrom"]);
 
-		node.children[0].children[0].innerText = getDateStringFromDate(date);
-		node.children[0].children[1].innerText = entry["placementRank"];
+		$(node, ".history-date").innerText = getDateStringFromDate(date);
+		$(node, ".history-placement").innerText = entry["placementRank"];
 
 		var reason = "";
 		var correspondingClass = "";
@@ -135,8 +156,8 @@ function appendHistoryRows(root, entries) {
 				break;
 		}
 
-		node.children[0].children[2].innerText = reason;
-		node.children[0].classList.add(correspondingClass);
+		$(node, ".history-reason").innerText = reason;
+		root.classList.add(correspondingClass);
 
 		tbody.appendChild(node);
 	});
@@ -169,6 +190,81 @@ async function loadHistoryPage(root) {
 
 	} finally {
 		historyState.set({ isLoading: false });
+	}
+}
+
+function appendRecordRows(root, entries) {
+	const tbody = $(root, "#levelViewRecords tbody");
+	const template = $(document, "#levelRecordItem");
+
+	if (!tbody || !template) return;
+
+	if (!entries || entries.length === 0) {
+		appendEmptyTableRow(tbody, 3);
+		return;
+	}
+
+	entries.forEach(entry => {
+		const node = template.content.cloneNode(true);
+		const row = node.querySelector("tr");
+
+		const percentage = Number(entry["progress"]);
+		const videoUrl = String(entry["videoUrl"]);
+
+		$(node, ".record-username").innerText = entry["username"];
+		$(node, ".record-avatar").src = entry["avatarUrl"];
+		$(node, ".record-percentage").innerText = `${percentage}%`;
+		$(node, ".record-proof-button").href = videoUrl;
+
+		if (percentage >= 100) {
+			row.classList.add("completed");
+		}
+
+		let iconName = null;
+		if (videoUrl.toLowerCase().includes("youtube")) {
+			iconName = "youtube"
+		}
+
+		const recordProofOriginImage = $(node, ".record-proof-origin");
+		if (iconName) {
+			recordProofOriginImage.src = `/img/${iconName}.svg`;
+
+		} else {
+			recordProofOriginImage.style.display = "none";
+		}
+
+		tbody.appendChild(node);
+	});
+}
+
+async function loadRecordsPage(root) {
+	if (recordsState.get().isLoading || !recordsState.get().hasMore) return;
+	recordsState.set({ isLoading: true });
+
+	try {
+		const res = await cache.loadRecords(
+			recordsState.get().levelId,
+			100,
+			recordsState.get().cursor
+		);
+
+		if (!res) return;
+
+		appendRecordRows(root, res.result);
+
+		recordsState.set({
+			cursor: res.nextCursor ?? null,
+			hasMore: !!res.nextCursor,
+		});
+
+		$(root, "#levelViewRecords .level-table-load-more").style.display =
+			recordsState.get().hasMore ? "" : "none";
+
+	} catch (e) {
+		console.error(e.message);
+
+	} finally {
+		recordsState.set({ isLoading: false });
 	}
 }
 
@@ -273,22 +369,39 @@ async function loadView(levelId) {
 	// LEVEL VIEW RECORDS
 
 	$(root, "#levelViewRecords .records-title .record-requirement").innerText = `${result["level"]["percentage10thPoints"] ?? "100"}%`;
-	$(root, "#levelViewRecords .records-title .verified-victors").innerText = "0";
-	$(root, "#levelViewRecords .records-title .verified-records").innerText = "0";
+	$(root, "#levelViewRecords .records-title .verified-victors").innerText = result["records"]["victors"] ?? "0";
+	$(root, "#levelViewRecords .records-title .verified-records").innerText = result["records"]["count"] ?? "0";
+
+	// HISTORY STATE
 
 	historyState.set({
 		cursor: null,
 		hasMore: true,
 		levelId: levelId,
 	});
-
 	$(root, "#levelViewHistory tbody").innerHTML = "";
+
+	// RECORDS STATE
+
+	recordsState.set({
+		cursor: null,
+		hasMore: true,
+		levelId: levelId,
+	});
+	$(root, "#levelViewRecords tbody").innerHTML = "";
 
 	// HISTORY
 
 	await loadHistoryPage(root);
 	$(root, "#levelViewHistory .load-more-button").addEventListener("click", () => {
 		loadHistoryPage(root);
+	});
+
+	// RECORDS
+
+	await loadRecordsPage(root);
+	$(root, "#levelViewRecords .load-more-button").addEventListener("click", () => {
+		loadRecordsPage(root);
 	});
 }
 

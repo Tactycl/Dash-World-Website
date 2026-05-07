@@ -135,7 +135,22 @@ export class Cache {
 		const key = `${levelId}:${cursor ?? "start"}:${limit}`;
 
 		return this.getOrFetch("history", key, async () => {
-			const url = `https://api.tarylem.com/v1/demonlist/history/${levelId}?limit=${limit}${cursor ? `&cursor=${cursor}` : ""}`;
+			const url = `https://api.tarylem.com/v1/demonlist/demons/${levelId}/history?limit=${limit}${cursor ? `&cursor=${cursor}` : ""}`;
+
+			const response = await fetch(url);
+			if (!response.ok) {
+				throw new Error(`Response status: ${response.status}`);
+			}
+
+			return response.json();
+		});
+	}
+
+	async loadRecords(levelId, limit = 100, cursor = null) {
+		const key = `${levelId}:${cursor ?? "start"}:${limit}`;
+
+		return this.getOrFetch("records", key, async () => {
+			const url = `https://api.tarylem.com/v1/demonlist/demons/${levelId}/records?limit=${limit}${cursor ? `&cursor=${cursor}` : ""}`;
 
 			const response = await fetch(url);
 			if (!response.ok) {

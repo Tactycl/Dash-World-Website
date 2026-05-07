@@ -55,10 +55,10 @@
 				<section class="form-section" data-required="true" data-param="levelId">
 					<h2 class="form-title">Level<span>*</span></h2>
 					<p class="form-description separator">The level which you are submitting for</p>
-					<button id="levelInput" class="form-options-input form-input" data-choice="">
-						<span>Nothing selected at the moment</span>
-					</button>
-					<ul id="levelInputContent" class="form-options-content"></ul>
+					<div id="levelInput" class="select" data-dynamic-load="true">
+						<button class="select-button"><span></span></button>
+						<ul class="select-menu"></ul>
+					</div>
 				</section>
 			
 				<section class="form-section" data-required="true" data-param="progress">
@@ -96,7 +96,7 @@
 </div>
 
 <template id="formLevelEntryTemplate">
-	<li class="form-level-entry">
+	<li class="option form-level-entry">
 		<h1>#<span class="level-rank"></span> - <span class="level-name"></span></h1>
 	</li>
 </template>

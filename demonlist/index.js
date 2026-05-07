@@ -1,5 +1,6 @@
 import { HashRouter } from "./js/router.js";
 import { Cache } from "./js/cache.js";
+import { initComponents, setSelectValue } from "./js/components.js";
 import { isRuleRead, readRule, requireAuth, loadUser, tryLogin } from "./js/auth.js";
 import { submitForm, validateFormInput } from "./js/forms.js";
 import { splitCamelCase, loadVideoIFrame, getDateStringFromDate, getCommaNumber, formatDuration, getVideoData, getThumbnailLink } from "./js/helpers.js";
@@ -591,15 +592,21 @@ async function onLoadDashboard(isReloaded, {}) {
 }
 
 function appendLevelInputEntries(entries) {
-	const list = $(document, "#levelInputContent");
+	const levelInput = $(document, "#levelInput");
+	const list = $(levelInput, ".select-menu");
 	const template = $(document, "#formLevelEntryTemplate");
-	if (!list || !template) {
+	if (!levelInput || !list || !template) {
 		return;
 	}
 
 	entries.forEach(async (entry) => {
 		const node = template.content.cloneNode(true);
 		const root = node.firstElementChild;
+
+		const dataValue = entry["levelId"];
+		const dataText = `#${entry["placementRank"]} - ${entry["levelName"]}`;
+		root.setAttribute("data-value", dataValue);
+		root.setAttribute("data-text", dataText);
 
 		const video = getVideoData(entry["videoProofUrl"]);
 		const thumbnailUrl = await getThumbnailLink(video);
@@ -609,15 +616,8 @@ function appendLevelInputEntries(entries) {
 		$(node, ".level-rank").innerText = entry["placementRank"];
 		$(node, ".level-name").innerText = entry["levelName"];
 
-		node.firstElementChild.addEventListener("click", () => {
-			const input = $(document, "#levelInput");
-			const label = $(input, "span");
-
-			input.setAttribute("data-choice", entry["levelId"]);
-			label.innerText = `#${entry["placementRank"]} - ${entry["levelName"]}`;
-
-			input.classList.remove("selected");
-			list.classList.remove("active");
+		root.addEventListener("click", () => {
+			setSelectValue(levelInput, dataValue, dataText);
 		});
 
 		list.appendChild(node);
@@ -657,7 +657,7 @@ async function loadLevelInputList() {
 }
 
 function initLevelInputScroll() {
-	const list = $(document, "#levelInputContent");
+	const list = $(document, "#levelInput .select-menu");
 	if (!list) return;
 
 	let debounce = false;
@@ -683,26 +683,22 @@ async function onLoadSubmitForm(isReload, ruleType) {
 	}
 
 	const formType = ruleType == "submitRecordRules" ? "record" : "level";
+	document.addEventListener("select:toggle", (e) => {
+		const select = e.target.closest(".select");
+		if (!select) return;
 
-	const optionInputs = $$(document, ".form-options-input");
-	optionInputs.forEach((element) => {
-		const optionContent = $(document, `#${element.id}Content`);
-		if (!optionContent) {
-			return;
+		if (select.id === "levelInput" && e.detail.active) {
+			loadLevelInputList();
 		}
+	});
 
-		element.addEventListener("click", () => {
-			const isActive = !element.classList.contains("selected");
-			element.classList.toggle("selected", isActive);
-			optionContent.classList.toggle("active", isActive);
+	document.addEventListener("select:change", (e) => {
+		const select = e.target.closest(".select");
+		if (!select) return;
 
-			if (isActive && optionContent.children.length === 0) {
-				if (element.id == "levelInput") {
-					loadLevelInputList();
-					validateFormInput(formType);
-				}
-			}
-		});
+		if (select.id === "levelInput") {
+			validateFormInput(formType);
+		}
 	});
 
 	const ruleView = $(document, "#ruleView");
@@ -766,12 +762,8 @@ async function onLoadSubmitRecord(isReloaded, { id }) {
 			}
 
 			const level = response["result"]["level"];
-
 			const input = $(document, "#levelInput");
-			const label = $(input, "span");
-
-			input.setAttribute("data-choice", level["levelId"]);
-			label.innerText = `#${level["placementRank"]} - ${level["name"]}`;
+			setSelectValue(input, id, `#${level["placementRank"]} - ${level["name"]}`)
 
 		} catch (e) {
 			console.error("Failed to preload level input:", e);
@@ -856,6 +848,8 @@ async function init() {
 
 		window.location.href = "#dashboard";
 	});
+
+	initComponents();
 }
 
 // Demons

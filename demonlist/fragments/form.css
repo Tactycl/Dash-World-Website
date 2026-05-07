@@ -87,8 +87,7 @@
 	overflow-y: hidden;
 }
 
-.form-section .form-field-input,
-.form-section .form-options-input {
+.form-section .form-field-input {
 	color: var(--text-color-01);
 	height: calc(var(--text-nm) + var(--spacing) * 12);
 	font-size: var(--text-nm);
@@ -104,59 +103,6 @@
 	min-height: calc(var(--text-nm) + var(--spacing) * 12);
 	max-height: 16rem;
 	resize: vertical;
-}
-
-.form-section .form-options-input {
-	position: relative;
-	cursor: pointer;
-	transition: background 0.3s ease;
-	padding-right: calc(var(--text-nm) + var(--spacing) * 6);
-}
-
-.form-section .form-options-input[data-choice=""] span {
-	color: var(--text-color-02);
-}
-
-.form-section .form-options-input:hover {
-	background-color: color-mix(in oklab, var(--color-bg-03) 90%, var(--text-color-01) 10%);
-}
-
-.form-section .form-options-input.selected {
-	border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-}
-
-.form-section .form-options-input::after {
-	content: "";
-	position: absolute;
-	display: block;
-	filter: var(--icon-filter);
-	background-image: url("/img/arrow.svg");
-	width: var(--text-nm);
-	height: var(--text-nm);
-	right: 0;
-	top: 50%;
-	transform: translate(-100%, -50%) rotateX(180deg);
-	transition: 0.3s ease;
-}
-
-.form-section .form-options-input.selected::after {
-	transform: translate(-100%, -50%);
-}
-
-.form-section .form-options-content {
-	display: none;
-	flex-direction: column;
-	overflow-y: scroll;
-	gap: calc(var(--spacing) * 4);
-	width: 100%;
-	max-height: 20rem;
-	border-radius: 0 0 var(--radius-xl) var(--radius-xl);
-	padding: calc(var(--spacing) * 6);
-	background: var(--color-bg-03);
-}
-
-.form-section .form-options-content.active {
-	display: flex;
 }
 
 .form-section .form-error,

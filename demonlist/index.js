@@ -855,7 +855,7 @@ function appendSelfRecords(entries, reset = false) {
 		statusLabel.classList.add(status);
 
 		goToLevelButton.href = `#demons/${entry["levelId"]}`;
-		viewProofButton.href = entry["videoProofUrl"];
+		viewProofButton.href = entry["videoUrl"];
 
 		submitDate.innerText = getDateStringFromDate(new Date(entry["createdAt"]));
 		if (entry["checkedAt"]) {

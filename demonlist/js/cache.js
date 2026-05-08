@@ -133,7 +133,6 @@ export class Cache {
 
 	async loadHistory(levelId, limit = 100, cursor = null) {
 		const key = `${levelId}:${cursor ?? "start"}:${limit}`;
-
 		return this.getOrFetch("history", key, async () => {
 			const url = `https://api.tarylem.com/v1/demonlist/demons/${levelId}/history?limit=${limit}${cursor ? `&cursor=${cursor}` : ""}`;
 
@@ -148,11 +147,26 @@ export class Cache {
 
 	async loadRecords(levelId, limit = 100, cursor = null) {
 		const key = `${levelId}:${cursor ?? "start"}:${limit}`;
-
 		return this.getOrFetch("records", key, async () => {
 			const url = `https://api.tarylem.com/v1/demonlist/demons/${levelId}/records?limit=${limit}${cursor ? `&cursor=${cursor}` : ""}`;
 
 			const response = await fetch(url);
+			if (!response.ok) {
+				throw new Error(`Response status: ${response.status}`);
+			}
+
+			return response.json();
+		});
+	}
+
+	async loadSelfRecords(sort = "desc", status = "all", limit = 100, cursor = null) {
+		const key = `${sort}:${status}:${cursor ?? "start"}:${limit}`;
+		return this.getOrFetch("selfRecords", key, async () => {
+			const url = `https://api.tarylem.com/v1/demonlist/user/me/records?limit=${limit}${cursor ? `&cursor=${cursor}` : ""}&sort=${sort}&status=${status}`;
+
+			const response = await fetch(url, {
+				credentials: "include",
+			});
 			if (!response.ok) {
 				throw new Error(`Response status: ${response.status}`);
 			}

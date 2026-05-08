@@ -41,6 +41,14 @@ const recordsState = createState({
 	levelId: null
 });
 
+const selfRecordsState = createState({
+	cursor: null,
+	isLoading: false,
+	hasMore: true,
+	sort: "desc",
+	status: "all"
+});
+
 function switchMainPageView(tabName) {
 	const views = $$(document, ".list-view");
 	views.forEach(view => {
@@ -782,13 +790,216 @@ async function onLoadSubmitLevel(isReloaded, {}) {
 	$(document, "#usernameLabel").innerText = user["username"];
 }
 
-async function onLoadRecords(isReloaded, {}) {
+function appendSelfRecords(entries, reset = false) {
+	const list = $(document, ".records-list");
+	const template = $(document, "#recordTemplate");
+	if (!list || !template) {
+		return;
+	}
+
+	if (reset) {
+		list.innerHTML = "";
+	}
+
+	if (!entries || entries.length === 0) {
+		if (reset) {
+			const empty = el("li", "empty-records");
+			const title = el("p", null, "No records found.");
+			empty.appendChild(title);
+			list.appendChild(empty);
+		}
+
+		return;
+	}
+
+	const tasks = entries.map(async (entry) => {
+		const node = template.content.cloneNode(true);
+
+		const root = node.querySelector(".record-item");
+
+		const recordHeader = $(node, ".record-header");
+
+		const levelPlacement = $(node, ".level-placement");
+		const levelName = $(node, ".level-name");
+		const recordProgress = $(node, ".record-progress");
+
+		const statusLabel = $(node, ".status-label");
+
+		const moderatorContent = $(node, ".mod-content");
+		const moderatorUsername = $(node, ".moderator-username");
+		const moderatorAvatar = $(node, ".moderator-avatar");
+		const moderatorNote = $(node, ".moderator-note");
+
+		const submitDate = $(node, ".submit-date");
+		const reviewDate = $(node, ".review-date");
+
+		const buttons = $$(node, ".button-master");
+
+		const goToLevelButton = buttons[0];
+		const viewProofButton = buttons[1];
+
+		const videoData = getVideoData(entry["videoProofUrl"]);
+		const videoThumbnail = await getThumbnailLink(videoData);
+
+		recordHeader.style.backgroundImage = `url(${videoThumbnail})`;
+
+		levelPlacement.innerText = entry["placementRank"];
+		levelName.innerText = entry["levelName"];
+
+		const progress = Number(entry["progress"]);
+		recordProgress.innerText = `${progress}%`;
+
+		const status = String(entry["status"]).toLowerCase();
+
+		statusLabel.innerText = status;
+		statusLabel.classList.add(status);
+
+		goToLevelButton.href = `#demons/${entry["levelId"]}`;
+		viewProofButton.href = entry["videoProofUrl"];
+
+		submitDate.innerText = getDateStringFromDate(new Date(entry["createdAt"]));
+		if (entry["checkedAt"]) {
+			reviewDate.innerText = getDateStringFromDate(new Date(entry["checkedAt"]));
+
+		} else {
+			reviewDate.parentElement.remove();
+		}
+
+		if (entry["moderatorUsername"] || entry["moderatorAvatarUrl"] || entry["reason"]) {
+			moderatorUsername.innerText = entry["moderatorUsername"] ?? "Unknown";
+			if (entry["moderatorAvatarUrl"]) {
+				moderatorAvatar.src = entry["moderatorAvatarUrl"];
+
+			} else {
+				moderatorAvatar.style.display = "none";
+			}
+
+			moderatorNote.innerText = entry["reason"] ?? entry["note"] ?? "No note provided.";
+
+		} else {
+			moderatorContent.style.display = "none";
+		}
+
+		return node;
+	});
+
+	Promise.all(tasks).then((nodes) => {
+		for (const node of nodes) {
+			list.appendChild(node);
+		}
+	});
+}
+
+async function loadSelfRecordsPage(reset = false) {
+	if (!reset && (selfRecordsState.get().isLoading || !selfRecordsState.get().hasMore)) {
+		return;
+	}
+
+	selfRecordsState.set({ isLoading: true });
+
+	try {
+		const state = selfRecordsState.get();
+		const res = await cache.loadSelfRecords(
+			state.sort,
+			state.status,
+			100,
+			state.cursor
+		);
+
+		if (!res) {
+			return;
+		}
+
+		appendSelfRecords(res.result, reset);
+
+		selfRecordsState.set({
+			cursor: res.nextCursor ?? null,
+			hasMore: !!res.nextCursor
+		});
+
+	} catch (e) {
+		console.error(e.message);
+
+	} finally {
+		selfRecordsState.set({ isLoading: false });
+	}
+}
+
+function initRecordsInfiniteScroll() {
+	const container = $(document, "#recordsScrollContainer");
+	if (!container) {
+		return;
+	}
+
+	let debounce = false;
+	let lastTrigger = 0;
+
+	container.addEventListener("scroll", async () => {
+		if (debounce || Date.now() - lastTrigger < INFINITE_SCROLL_COOLDOWN) {
+			return;
+		}
+
+		const isAtBottom = container.scrollHeight - (container.scrollTop + container.clientHeight) <= INFINITE_SCROLL_THRESHOLD;
+		if (isAtBottom) {
+			debounce = true;
+
+			await loadSelfRecordsPage();
+
+			debounce = false;
+			lastTrigger = Date.now();
+		}
+	});
+}
+
+function initRecordsFilters() {
+	const stateFilter = $(document, "#stateFilter");
+	const dateFilter = $(document, "#dateFilter");
+
+	if (stateFilter) {
+		stateFilter.addEventListener("select:change", async () => {
+			const value = stateFilter.getAttribute("data-choice") ?? "all";
+
+			selfRecordsState.set({
+				status: value
+			});
+
+			await loadSelfRecordsPage(true);
+		});
+	}
+
+	if (dateFilter) {
+		dateFilter.addEventListener("select:change", async () => {
+			const value = dateFilter.getAttribute("data-choice") ?? "desc";
+
+			selfRecordsState.set({
+				sort: value
+			});
+
+			await loadSelfRecordsPage(true);
+		});
+	}
+}
+
+async function onLoadRecords(isReloaded, { }) {
 	const user = await requireAuth();
 	if (!user) {
 		return;
 	}
 
-	
+	if (isReloaded) {
+		initRecordsInfiniteScroll();
+		initRecordsFilters();
+	}
+
+	selfRecordsState.set({
+		cursor: null,
+		isLoading: false,
+		hasMore: true,
+		sort: "desc",
+		status: "all"
+	});
+
+	await loadSelfRecordsPage(true);
 }
 
 function onLoadError(isReloaded, { id }) {

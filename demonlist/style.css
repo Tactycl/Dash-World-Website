@@ -3,6 +3,10 @@
 :root {
 	--color-dw-accent-01: #52abff;
 	--color-dw-accent-02: #ff32ff;
+	--color-bg-01: color-mix(in oklab, var(--color-bg-0s) 100%, var(--color-bg-0e));
+	--color-bg-02: color-mix(in oklab, var(--color-bg-0s) 95%, var(--color-bg-0e));
+	--color-bg-03: color-mix(in oklab, var(--color-bg-0s) 90%, var(--color-bg-0e));
+	--color-bg-04: color-mix(in oklab, var(--color-bg-0s) 85%, var(--color-bg-0e));
 	--gradient-dw-accent: linear-gradient(110deg, var(--color-dw-accent-01) 0%, var(--color-dw-accent-02) 100%);
 	--box-shadow-glow-dw-accent:
 		-3px -1px 8px var(--color-dw-accent-01),
@@ -35,20 +39,16 @@
 }
 
 :root[data-theme="dark"] {
-	--color-bg-01: #131415;
-	--color-bg-02: #1b1c1e;
-	--color-bg-03: #1f2022;
-	--color-bg-04: #26272a;
+	--color-bg-0s: #1b1b1b;
+	--color-bg-0e: #e0f0ff;
 	--text-color-01: #ffffff;
 	--text-color-02: #cccccc;
 	--icon-filter: brightness(100%);
 }
 
 :root[data-theme="light"] {
-	--color-bg-01: #d3d8db;
-	--color-bg-02: #dce1e6;
-	--color-bg-03: #e9eff3;
-	--color-bg-04: #f5fbff;
+	--color-bg-0s: #f0f0f0;
+	--color-bg-0e: #676c71;
 	--text-color-01: #181a1b;
 	--text-color-02: #282a2c;
 	--icon-filter: brightness(0%);
@@ -141,7 +141,8 @@ span:has(img) img {
 	position: relative;
 }
 
-.separator::after {
+.separator::after,
+.select.active .select-button::after {
 	content: "";
 	display: block;
 	position: absolute;
@@ -360,8 +361,8 @@ span:has(img) img {
 	gap: 0;
 }
 
-.select .select-button {
-	position: relative;
+.select .select-button,
+.select .select-menu .option:not(.custom) {
 	cursor: pointer;
 	text-align: left;
 	white-space: nowrap;
@@ -370,21 +371,26 @@ span:has(img) img {
 	color: var(--text-color-01);
 	height: calc(var(--text-nm) + var(--spacing) * 12);
 	font-size: var(--text-nm);
-	border-radius: var(--radius-xl);
-	caret-color: var(--color-dw-accent-01);
 	background-color: var(--color-bg-03);
 	padding: calc(var(--spacing) * 6);
-	padding-right: calc(var(--text-nm) + var(--spacing) * 6);
 	width: 100%;
 	outline: 0;
 	transition: background 0.3s ease;
+}
+
+.select .select-button {
+	position: relative;
+	border-radius: var(--radius-xl);
+	caret-color: var(--color-dw-accent-01);
+	padding-right: calc(var(--text-nm) + var(--spacing) * 6);
 }
 
 .select[data-choice=""] .select-button span {
 	color: var(--text-color-02);
 }
 
-.select .select-button:hover {
+.select .select-button:hover,
+.select .select-menu .option:not(.custom):hover {
 	background-color: color-mix(in oklab, var(--color-bg-03) 90%, var(--text-color-01) 10%);
 }
 
@@ -392,7 +398,7 @@ span:has(img) img {
 	border-radius: var(--radius-xl) var(--radius-xl) 0 0;
 }
 
-.select .select-button::after {
+.select .select-button::before {
 	content: "";
 	position: absolute;
 	display: block;
@@ -402,23 +408,21 @@ span:has(img) img {
 	height: var(--text-nm);
 	right: 0;
 	top: 50%;
-	transform: translate(-100%, -50%) rotateX(180deg);
+	transform: translate(-100%, -50%);
 	transition: 0.3s ease;
 }
 
-.select.active .select-button::after {
-	transform: translate(-100%, -50%);
+.select.active .select-button::before {
+	transform: translate(-100%, -50%)scaleY(-100%);
 }
 
 .select .select-menu {
 	display: none;
 	flex-direction: column;
 	overflow-y: scroll;
-	gap: calc(var(--spacing) * 4);
 	width: 100%;
 	max-height: 20rem;
 	border-radius: 0 0 var(--radius-xl) var(--radius-xl);
-	padding: calc(var(--spacing) * 6);
 	background: var(--color-bg-03);
 }
 

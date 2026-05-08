@@ -87,6 +87,11 @@
 	overflow-y: hidden;
 }
 
+#levelInput .select-menu {
+	gap: calc(var(--spacing) * 4);
+	padding: calc(var(--spacing) * 6);
+}
+
 .form-section .form-field-input {
 	color: var(--text-color-01);
 	height: calc(var(--text-nm) + var(--spacing) * 12);
@@ -151,14 +156,14 @@
 	background-blend-mode: multiply;
 	user-select: none;
 	border-radius: var(--radius-lg);
-	background-color: rgba(0, 0, 0, 0.6);
+	background-color: rgba(0, 0, 0, 0);
 	width: 100%;
 	padding: calc(var(--spacing) * 4);
 	transition: 0.1s ease;
 }
 
 .form-level-entry:hover {
-	background-color: rgba(0, 0, 0, 0.8);
+	background-color: rgba(0, 0, 0, 0.2);
 }
 
 .form-level-entry:active {
@@ -167,6 +172,7 @@
 
 .form-level-entry h1 {
 	color: white;
+	text-shadow: 0 0 4px black;
 }
 
 /* RULES */

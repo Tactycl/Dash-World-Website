@@ -9,26 +9,77 @@
 		<div>
 			<section id="searchOptionsHeader" class="record-section">
 				<h2 class="separator">Filter your Records</h2>
-				<div id="stateFilter" class="select">
-					<button class="select-button"><span></span></button>
-					<ul class="select-menu">
-						<button class="option" data-value="all" data-text="All States" data-default="true">All</button>
-						<button class="option" data-value="pending" data-text="Pending">Pending</button>
-						<button class="option" data-value="rejected" data-text="Rejected">Rejected</button>
-						<button class="option" data-value="accepted" data-text="Accepted">Accepted</button>
-					</ul>
+				<div class="filter-list" style="--columns: 2">
+					<div class="filter-item">
+						<p class="filter-title">Filter by Status</p>
+						<div id="stateFilter" class="select">
+							<button class="select-button"><span></span></button>
+							<div class="select-menu">
+								<button class="option" data-value="all" data-text="All" data-default="true">All</button>
+								<button class="option" data-value="pending" data-text="Pending">Pending</button>
+								<button class="option" data-value="rejected" data-text="Rejected">Rejected</button>
+								<button class="option" data-value="accepted" data-text="Accepted">Accepted</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="filter-item">
+						<p class="filter-title">Filter by Date</p>
+						<div id="dateFilter" class="select">
+							<button class="select-button"><span></span></button>
+							<div class="select-menu">
+								<button class="option" data-value="desc" data-text="Newest first" data-default="true">Newest first</button>
+								<button class="option" data-value="asc" data-text="Oldest first">Oldest first</button>
+							</div>
+						</div>
+					</div>
 				</div>
 			</section>
-			
-			<ul class="records-list">
-				<li class="record-section">
-					
-				</li>
-			</ul>
+
+			<div class="separator"></div>
+			<ul id="recordsScrollContainer" class="records-list"></ul>
 		</div>
 	</div>
 </div>
 
 <template id="recordTemplate">
-
+	<li class="record-item">
+		<div class="record-header">
+			<h2>#<span class="level-placement"></span> - <span class="level-name"></span> <span class="record-progress"></span></h2>
+		</div>
+		<div class="record-content">
+			<div class="info-content separator">
+				<div class="status-content">
+					<p class="status-title">This record is:</p>
+					<p class="status-label"></p>
+				</div>
+	
+				<a class="button-master">
+					<span>Go to Level</span>
+				</a>
+				<a class="button-master" target="_blank">
+					<span>View Proof</span>
+				</a>
+			</div>
+			<div class="mod-content separator">
+				<div class="moderator-section">
+					<p class="moderator-title">Reviewed by:</p>
+					<div class="moderator-user">
+						<div class="moderator-avatar-container">
+							<img class="moderator-avatar">
+						</div>
+						<p class="moderator-username"></p>
+					</div>
+				</div>
+				<div class="moderator-section">
+					<p class="moderator-title">Note/Reason given by Moderator:</p>
+					<p class="moderator-note"></p>
+				</div>
+			</div>
+			<div class="meta-content">
+				<p class="meta-label">Submitted on the <span class="submit-date"></span></p>
+				<p class="meta-label">Reviewed on the <span class="review-date"></span></p>
+			</div>
+		</div>
+	</li>
 </template>

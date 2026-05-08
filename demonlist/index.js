@@ -865,6 +865,10 @@ function appendSelfRecords(entries, reset = false) {
 			reviewDate.parentElement.remove();
 		}
 
+		if (entry["status"] != "pending") {
+			moderatorContent.classList.add("active");
+		}
+
 		if (entry["moderatorUsername"] || entry["moderatorAvatarUrl"] || entry["reason"]) {
 			moderatorUsername.innerText = entry["moderatorUsername"] ?? "Unknown";
 			if (entry["moderatorAvatarUrl"]) {

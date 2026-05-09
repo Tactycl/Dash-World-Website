@@ -57,7 +57,6 @@ function renderFormSuccess(message = "Your submission has been successfully sent
 
 function getPayload(type) {
 	const levelRaw = type === "record" ? $(document, "#levelInput").getAttribute("data-choice") : $(document, "#levelInput").value;
-	const progressRaw = $(document, "#progressInput")?.value;
 
 	const payload = {
 		levelId: Number(levelRaw),
@@ -66,7 +65,12 @@ function getPayload(type) {
 	};
 
 	if (type === "record") {
+		const progressRaw = $(document, "#progressInput")?.value;
 		payload.progress = Number(progressRaw);
+
+	} else {
+		const creatorsRaw = $(document, "#creatorsInput").value.trim();
+		payload.creators = creatorsRaw.length > 0 ? creatorsRaw.split(",").map(v => v.trim()).filter(Boolean).join(",") : null;
 	}
 
 	return payload;

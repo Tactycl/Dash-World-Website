@@ -32,14 +32,14 @@
 
 #userContainer {
 	display: inline-flex;
-	gap: calc(var(--spacing) * 8);
+	gap: calc(var(--spacing) * 4);
 }
 
 #avatarIconContainer {
-	border-radius: 100%;
 	overflow: hidden;
 	border: 1px transparent solid;
 	background: linear-gradient(var(--color-bg-02)) var(--border-dw-accent);
+	border-radius: var(--radius-xl);
 	width: calc(var(--spacing) * 36);
 	height: calc(var(--spacing) * 36);
 	aspect-ratio: 1;

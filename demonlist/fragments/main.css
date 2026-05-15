@@ -424,9 +424,9 @@
 	width: calc(var(--spacing) * 14);
 	height: calc(var(--spacing) * 14);
 	margin-right: calc(var(--spacing) * 2);
+	border-radius: var(--radius-xl);
 	border: 1px solid transparent;
 	background: linear-gradient(var(--color-bg-01)) var(--border-dw-accent);
-	border-radius: 100%;
 }
 
 #levelViewRecords .record-entry .record-proof-button.button-secondary {

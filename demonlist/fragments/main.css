@@ -175,7 +175,8 @@
 	font-size: var(--text-sm);
 }
 
-.list-entry .desc-view .level-publisher-view .level-publisher {
+.list-entry .desc-view .level-publisher-view .level-publisher,
+.list-entry .desc-view .user-score-view .user-score {
 	font-weight: var(--font-semi);
 	font-style: italic;
 }

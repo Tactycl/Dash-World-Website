@@ -600,7 +600,7 @@ function loadLeaderboard(response) {
 		$(node, ".user-thumbnail").src = element["avatarUrl"];
 		$(node, ".user-rank").innerText = placementRank;
 		$(node, ".user-name").innerText = element["username"];
-		$(node, ".user-score-type").innerText = "Demons score";
+		$(node, ".user-score-type").innerText = "Demons Score";
 		$(node, ".user-score").innerText = getCommaNumber(element["demonsScore"]);
 
 		root.style.order = placementRank;

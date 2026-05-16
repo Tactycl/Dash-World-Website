@@ -18,27 +18,34 @@ const demonListState = createState({
 	cursor: null,
 	isLoading: false,
 	hasMore: true,
-	selectedLevelId: null
+	selectedLevelId: null,
 });
+
+const leaderboardState = createState({
+	cursor: null,
+	isLoading: false,
+	hasMore: true,
+	selectedPlayerId: null,
+})
 
 const levelInputState = createState({
 	cursor: null,
 	isLoading: false,
-	hasMore: true
+	hasMore: true,
 });
 
 const historyState = createState({
 	cursor: null,
 	isLoading: false,
 	hasMore: true,
-	levelId: null
+	levelId: null,
 });
 
 const recordsState = createState({
 	cursor: null,
 	isLoading: false,
 	hasMore: true,
-	levelId: null
+	levelId: null,
 });
 
 const selfRecordsState = createState({
@@ -46,7 +53,7 @@ const selfRecordsState = createState({
 	isLoading: false,
 	hasMore: true,
 	sort: "desc",
-	status: "all"
+	status: "all",
 });
 
 function switchMainPageView(tabName) {
@@ -306,7 +313,7 @@ function loadItemView(itemViewTemplateId) {
 	return itemView;
 }
 
-async function loadView(levelId) {
+async function loadLevelView(levelId) {
 	const root = loadItemView("levelViewTemplate");
 
 	const response = await cache.loadDemonData(levelId);
@@ -422,7 +429,7 @@ function updateSelectedMainPageDemon() {
 		if ((levelId == demonListState.get().selectedLevelId) || (!demonListState.get().selectedLevelId && rank == 1)) {
 			demonListState.set({ selectedLevelId: levelId });
 			element.classList.add("selected");
-			loadView(levelId);
+			loadLevelView(levelId);
 
 		} else {
 			element.classList.remove("selected");
@@ -467,7 +474,7 @@ function loadDemons(response) {
 
 		if ((element["levelId"] == demonListState.get().selectedLevelId) || (!demonListState.get().selectedLevelId && element["placementRank"] == 1)) {
 			root.classList.add("selected");
-			loadView(element["levelId"]);
+			loadLevelView(element["levelId"]);
 		}
 
 		if (element["placementRank"] == NORMAL_LIST_LENGTH + 1) {
@@ -504,7 +511,7 @@ async function loadDemonsList() {
 		}
 
 		const result = await response.json();
-		loadDemons(result)
+		loadDemons(result);
 
 		demonListState.set({
 			cursor: result.nextCursor ?? null,
@@ -558,19 +565,104 @@ async function onLoadDemons(isReloaded, { id }) {
 	}
 }
 
-function onLoadLeaderboard(isReloaded, { id }) {
-	const isTabFirstTime = onLoadMain(isReloaded, "leaderboard");
+function loadPlayerView(userId) {
+	// TODO
+}
 
-	//const playerId = id ? Number(id) : null;
+function updateSelectedMainPagePlayer() {
+	const elements = $$(document, "#leaderboardList .list-entry");
+	elements.forEach((element) => {
+		const rank = Number(element.getAttribute("data-rank"));
+		const userId = Number(element.getAttribute("data-id"));
+		if ((userId == leaderboardState.get().selectedPlayerId) || (!leaderboardState.get().selectedPlayerId && rank == 1)) {
+			leaderboardState.set({ selectedPlayerId: userId });
+			element.classList.add("selected");
+			loadPlayerView(userId);
+
+		} else {
+			element.classList.remove("selected");
+		}
+	});
+}
+
+function loadLeaderboard(response) {
+	const leaderboardEntryTemplate = $(document, "#leaderboardEntryTemplate");
 	const list = $(document, "#leaderboardList");
-	if (list && isTabFirstTime) {
-		const title = document.createElement("h2");
-		title.innerText = "This page is currently under construction!";
-		title.id = "errorRouterNotification";
-		list.appendChild(title);
+	if (!leaderboardEntryTemplate || !list) return;
+
+	const result = response["result"];
+	result.forEach((element) => {
+		const node = leaderboardEntryTemplate.content.cloneNode(true);
+		const root = node.firstElementChild;
+
+		const placementRank = list.children.length + 1;
+
+		$(node, ".user-thumbnail").src = element["avatarUrl"];
+		$(node, ".user-rank").innerText = placementRank;
+		$(node, ".user-name").innerText = element["username"];
+		$(node, ".user-score-type").innerText = "Demons score";
+		$(node, ".user-score").innerText = getCommaNumber(element["demonsScore"]);
+
+		root.style.order = placementRank;
+		root.setAttribute("data-id", element["gameId"]);
+		root.setAttribute("data-username", element["username"]);
+		root.setAttribute("data-rank", placementRank);
+		root.setAttribute("data-created", element["createdAt"]);
+
+		if ((element["gameId"] == leaderboardState.get().selectedPlayerId) || (!leaderboardState.get().selectedPlayerId && placementRank == 1)) {
+			root.classList.add("selected");
+			loadPlayerView(element["gameId"]);
+		}
+
+		root.addEventListener("click", () => {
+			toggleItemView(true);
+			window.location.href = `#leaderboard/${element["gameId"]}`
+		});
+
+		list.appendChild(node);
+	});
+}
+
+async function loadLeaderboardList() {
+	if (leaderboardState.get().isLoading || !leaderboardState.get().hasMore) return;
+	leaderboardState.set({ isLoading: true });
+
+	try {
+		const cursor = leaderboardState.get().cursor;
+
+		const response = await fetch(`https://api.tarylem.com/v1/demonlist/leaderboard?limit=100${cursor ? `&cursor=${cursor}` : ""}`);
+		if (!response.ok) {
+			throw new Error(`Response status: ${response.status}`);
+		}
+
+		const result = await response.json();
+		loadLeaderboard(result);
+
+		leaderboardState.set({
+			cursor: result.nextCursor ?? null,
+			hasMore: !!result.nextCursor,
+		});
+
+	} catch(error) {
+		console.error(error.message);
+		
+	} finally {
+		leaderboardState.set({ isLoading: false });
+	}
+}
+
+async function onLoadLeaderboard(isReloaded, { id }) {
+	const isTabFirstTime = onLoadMain(isReloaded, "leaderboard");
+	leaderboardState.set({ selectedPlayerId: id ? Number(id) : null });
+
+	if (isTabFirstTime) {
+		await loadLeaderboardList();
+
+	} else {
+		updateSelectedMainPagePlayer();
 	}
 
-	loadItemView(null);
+	loadItemView("errorRouterViewTemplate");
 }
 
 async function onLoadDashboard(isReloaded, {}) {
@@ -582,7 +674,7 @@ async function onLoadDashboard(isReloaded, {}) {
 	$(document, "#avatarIcon").src = user["avatarUrl"];
 	$(document, "#usernameLabel").innerText = user["username"];
 	$(document, "#demonsRank").innerText = user["demonsRank"];
-	$(document, "#demonsScore").innerText = user["demonsScore"];
+	$(document, "#demonsScore").innerText = getCommaNumber(user["demonsScore"]);
 	$(document, "#hardestDemon").innerText = user["hardestDemonName"] ?? "None";
 
 	$(document, "#logoutButton").addEventListener("click", async () => {

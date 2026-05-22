@@ -313,8 +313,16 @@ function loadItemView(itemViewTemplateId) {
 	return itemView;
 }
 
+function initViewMobileActions(root) {
+	$(root, ".view-mobile-actions").addEventListener("click", () => {
+		toggleItemView(false);
+	});
+}
+
 async function loadLevelView(levelId) {
 	const root = loadItemView("levelViewTemplate");
+
+	const user = await loadUser();
 
 	const response = await cache.loadDemonData(levelId);
 	if (!response) return;
@@ -323,9 +331,7 @@ async function loadLevelView(levelId) {
 
 	// MOBILE ACTIONS
 
-	$(root, "#levelViewMobileActions .close-button").addEventListener("click", () => {
-		toggleItemView(false);
-	});
+	initViewMobileActions(root);
 
 	// LEVEL VIEW HEADER
 
@@ -363,7 +369,7 @@ async function loadLevelView(levelId) {
 	});
 
 	const submitRecordButton = $(root, "#submitRecordButton");
-	if (result["level"]["placementRank"] > NORMAL_LIST_LENGTH) {
+	if (result["level"]["placementRank"] > NORMAL_LIST_LENGTH || user === null) {
 		submitRecordButton.style.display = "none";
 
 	} else {
@@ -565,7 +571,32 @@ async function onLoadDemons(isReloaded, { id }) {
 	}
 }
 
-function loadPlayerView(userId) {
+async function loadPlayerView(userId) {
+	const root = loadItemView("playerViewTemplate");
+	
+	const response = await cache.loadPlayerData(userId);
+	if (!response) return;
+
+	const result = response["result"];
+
+	/* MOBILE ACTIONS */
+
+	initViewMobileActions(root);
+
+	/* PLAYER VIEW HEADER */
+
+	$(document, "#playerViewHeader .player-avatar").src = result["avatarUrl"];
+	$(document, "#playerViewHeader .player-name").innerText = result["username"];
+	$(document, "#playerViewHeader .player-rank").innerText = result["demonsRank"];
+
+	/* PLAYER VIEW CONTENT */
+
+	$(document, "#playerViewContent .demons-rank").innerText = result["demonsRank"];
+	$(document, "#playerViewContent .demons-score").innerText = getCommaNumber(result["demonsScore"]);
+	$(document, "#playerViewContent .hardest-demon").innerText = result["hardestDemonName"];
+	$(document, "#playerViewContent .player-joined").innerText = getDateStringFromDate(new Date(result["createdAt"]));
+
+	$(document, "#playerViewContent #goToHardestDemon").href = `#demons/${result["hardestDemon"]}`;
 	// TODO
 }
 
@@ -661,8 +692,6 @@ async function onLoadLeaderboard(isReloaded, { id }) {
 	} else {
 		updateSelectedMainPagePlayer();
 	}
-
-	loadItemView("errorRouterViewTemplate");
 }
 
 async function onLoadDashboard(isReloaded, {}) {

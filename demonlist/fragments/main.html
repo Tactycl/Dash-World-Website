@@ -36,8 +36,62 @@
 	</div>
 </template>
 
-<template id="errorRouterViewTemplate">
-	<h2 id="errorRouterNotification">This page is currently under construction!</h2>
+<template id="playerViewTemplate">
+	<div id="playerViewMobileActions" class="view-mobile-actions">
+		<button class="close-button"><img src="/img/close.svg"></button>
+	</div>
+
+	<div id="playerViewHeader" class="player-header separator">
+		<div class="player-avatar-view">
+			<img class="player-avatar">
+		</div>
+		<div class="player-desc-view">
+			<h1 class="player-name"></h1>
+			<p class="player-rank-view">Top #<span class="player-rank"></span> Player</p>
+		</div>
+	</div>
+
+	<div id="playerViewContent" class="separator">
+		<div class="info-grid">
+			<div class="info-space">
+				<p class="info-space-title separator">DEMONS RANK</p>
+				<p class="info-space-value demons-rank"></p>
+			</div>
+		
+			<div class="info-space">
+				<p class="info-space-title separator">DEMONS SCORE</p>
+				<p class="info-space-value demons-score"></p>
+			</div>
+		
+			<div class="info-space">
+				<p class="info-space-title separator">HARDEST DEMON</p>
+				<p class="info-space-value hardest-demon"></p>
+			</div>
+		
+			<div class="info-space">
+				<p class="info-space-title separator">JOINED</p>
+				<p class="info-space-value player-joined"></p>
+			</div>
+		</div>
+
+		<div class="info-buttons">
+			<a class="button-master" id="goToHardestDemon">
+				<span>Go to Hardest Demon</span>
+			</a>
+		</div>
+	</div>
+
+	<div id="playerViewRecords">
+		<div class="records-list-view">
+			<h2 class="separator">Records</h2>
+			<ul class="records-list">
+				<!-- TODO -->
+				<li>
+					<span>Nothing to load</span>
+				</li>
+			</ul>
+		</div>
+	</div>
 </template>
 
 <!-- DEMONS -->
@@ -64,7 +118,7 @@
 </template>
 
 <template id="levelViewTemplate">
-	<div id="levelViewMobileActions">
+	<div id="levelViewMobileActions" class="view-mobile-actions">
 		<button class="close-button"><img src="/img/close.svg"></button>
 	</div>
 
@@ -103,7 +157,7 @@
 				</div>
 			</div>
 
-			<div class="level-info-buttons">
+			<div class="info-buttons">
 				<button class="button-master" id="copyLevelIdButton">
 					<span>Copy Level ID</span>
 				</button>

@@ -175,6 +175,17 @@ export class Cache {
 		});
 	}
 
+	async loadPlayerData(id) {
+		return this.getOrFetch("users", id, async () => {
+			const response = await fetch(`https://api.tarylem.com/v1/demonlist/user/${id}`);
+			if (!response.ok) {
+				throw new Error(`Response status: ${response.status}`);
+			}
+			return response.json();
+		});
+	}
+
+
 	getLevelData(id) {
 		return this.getFromCache("levels", id);
 	}

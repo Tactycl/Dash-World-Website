@@ -33,7 +33,7 @@ export function isRuleRead(ruleType) {
 
 	rulePromises[ruleType] = (async () => {
 		try {
-			const res = await fetch(`https://api.tarylem.com/v1/demonlist/rules/isread/${ruleType}`, {
+			const res = await fetch(`https://api.tarylem.com/v1/demonlist/rules/is-read/${ruleType}`, {
 				credentials: "include"
 			});
 			if (!res.ok) {
